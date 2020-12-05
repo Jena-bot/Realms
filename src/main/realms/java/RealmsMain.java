@@ -7,6 +7,7 @@ public class RealmsMain extends JavaPlugin {
     @Override
     public void onLoad() {
         super.onLoad();
+        saveDefaultConfig();
     }
 
     @Override

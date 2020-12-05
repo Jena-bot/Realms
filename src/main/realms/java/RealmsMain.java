@@ -1,4 +1,4 @@
-package com.github.Jena;
+package main.realms.java;
 
 import org.bukkit.plugin.java.JavaPlugin;
 

@@ -1,19 +1,45 @@
 package main.realms.java.Human;
 
+import main.realms.java.RealmsMain;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 public class Human {
-    public static Player player;
-    public static UUID uuid;
-    public static String title;
+    public Player player;
+    public UUID uuid;
+    public String title;
     private long played;
     private long online;
     private File data;
 
-    public static Player getPlayer() {
+    public Human(Player player) {
+        this.player = player;
+        this.uuid = player.getUniqueId();
+        this.title = "";
+        this.played = System.currentTimeMillis();
+        this.online = System.currentTimeMillis();
+
+        this.data = new File(RealmsMain.database, this.uuid.toString() + ".yml");
+        YamlConfiguration config = new YamlConfiguration();
+
+        // configuration
+        try {
+            config.set("uuid", this.uuid.toString());
+            config.set("title", "");
+            config.set("played", System.currentTimeMillis());
+            config.set("online", System.currentTimeMillis());
+            config.save(data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Player getPlayer() {
         return player;
     }
 
@@ -21,7 +47,7 @@ public class Human {
         this.player = player;
     }
 
-    public static UUID getUuid() {
+    public UUID getUuid() {
         return uuid;
     }
 
@@ -29,11 +55,11 @@ public class Human {
         this.uuid = uuid;
     }
 
-    public static String getTitle() {
+    public String getTitle() {
         return title;
     }
 
-    public static void setTitle(String title) {
-        Human.title = title;
+    public  void setTitle(String title) {
+        this.title = title;
     }
 }

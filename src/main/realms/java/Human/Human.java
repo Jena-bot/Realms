@@ -4,6 +4,7 @@ import main.realms.java.Realm.Realm;
 import main.realms.java.RealmsMain;
 import main.realms.utils.RealmsException;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -14,7 +15,7 @@ import java.util.UUID;
 
 @SuppressWarnings("unused")
 public class Human {
-    public Player player;
+    public String name;
     public UUID uuid;
     public String title;
     public Realm realm;
@@ -24,7 +25,7 @@ public class Human {
 
     public Human(Player player, boolean create) throws RealmsException {
         if (create) {
-            this.player = player;
+            this.name = player.getName();
             this.uuid = player.getUniqueId();
             this.title = "";
             this.played = System.currentTimeMillis();
@@ -35,6 +36,7 @@ public class Human {
 
             // configuration
             try {
+                config.set("name", this.name);
                 config.set("uuid", this.uuid.toString());
                 config.set("title", "");
                 config.set("played", System.currentTimeMillis());
@@ -50,7 +52,8 @@ public class Human {
             YamlConfiguration config = new YamlConfiguration();
             try {
                 config.load(data);
-                this.uuid = player.getUniqueId();
+                this.name = config.getString("name");
+                this.uuid = UUID.fromString(config.getString("uuid"));
                 this.title = config.getString("title");
                 this.played = config.getLong("played");
                 this.online = config.getLong("online");
@@ -66,9 +69,10 @@ public class Human {
         // File loading and var setting
         try {
             config.load(file);
-            this.player = Bukkit.getPlayer(UUID.fromString(config.getString("uuid")));
             this.uuid = UUID.fromString(config.getString("uuid"));
             this.data = file;
+            this.name = config.getString("name");
+
 
             // title, separate due to "" being equal to null when in YAML configuration.
             if (config.getString("title") == null) {
@@ -82,12 +86,8 @@ public class Human {
         }
     }
 
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
+    public OfflinePlayer getPlayer() {
+        return Bukkit.getOfflinePlayer(uuid);
     }
 
     public UUID getUuid() {
@@ -132,5 +132,13 @@ public class Human {
 
     protected void setPlayed(long played) {
         this.played = played;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

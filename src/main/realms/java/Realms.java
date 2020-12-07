@@ -12,35 +12,35 @@ public class Realms {
 
     // this is a quick class that allows for easy access to a list of realms and humans without having to look through files.
     public static List<Human> getHumans() {
-        return humans;
+        return Realms.humans;
     }
 
     public static List<Realm> getRealms() {
-        return realms;
+        return Realms.realms;
     }
 
     public static void setHumans(List<Human> humanlist) {
-        humans = humanlist;
+        Realms.humans = humanlist;
     }
 
     public static void setRealms(List<Realm> realmslist) {
-        realms = realmslist;
+        Realms.realms = realmslist;
     }
 
     public static void addRealm(Realm realm) {
-        realms.add(realm);
+        Realms.realms.add(realm);
     }
 
     public static void removeRealm(Realm realm) {
-        realms.remove(realm);
+        Realms.realms.remove(realm);
     }
 
     public static void addHuman(Human human) {
-        humans.add(human);
+        Realms.humans.add(human);
     }
 
     public static void removeHuman(Human human) {
-        realms.remove(human);
+        Realms.humans.remove(human);
     }
 
 }

@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 public class RealmsMain extends JavaPlugin {
     public static String database = "plugins/Realms/data";
@@ -27,21 +26,17 @@ public class RealmsMain extends JavaPlugin {
         // to create data.
         File file = new File(database);
         if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            file.mkdir();
         }
     }
 
     @Override
     public void onEnable() {
         super.onEnable();
-        if (!loadData())
+        if (!loadData()) {
             this.getServer().getConsoleSender().sendMessage(ChatInfo.prefix("&cError loading data"));
             this.getLogger().severe("ERROR: DATA WAS NOT LOADED CORRECTLY.");
-            this.getPluginLoader().disablePlugin(this);
+        }
 
         registerSpecialCommands();
 
@@ -51,9 +46,10 @@ public class RealmsMain extends JavaPlugin {
     @Override
     public void onDisable() {
         super.onDisable();
-        if (!saveData())
+        if (!saveData()) {
             this.getServer().getConsoleSender().sendMessage(ChatInfo.prefix("&cError saving data"));
             this.getLogger().severe("ERROR: DATA WAS NOT SAVED.");
+        }
     }
 
     private void registerSpecialCommands() {
@@ -63,12 +59,13 @@ public class RealmsMain extends JavaPlugin {
         ((CraftServer) this.getServer()).getCommandMap().register("status", new HumanCommand("status", statalias, "realms.command.status"));
     }
 
-    private boolean saveData() {
+    public static boolean saveData() {
         YamlConfiguration config = new YamlConfiguration();
 
         // Humans
         for (Human human : Realms.getHumans()) {
-            config.set("uuid", human.uuid.toString());
+            config.set("name", human.getName());
+            config.set("uuid", human.getUuid().toString());
             config.set("title", human.getTitle());
             config.set("played", human.getPlayed());
             config.set("online", human.getOnline());
@@ -91,14 +88,15 @@ public class RealmsMain extends JavaPlugin {
         File humandata = new File(database + "/humans");
         Realms.setHumans(new LinkedList<>());
 
-
-        for (File data : Objects.requireNonNull(humandata.listFiles())) {
-            try {
-                Human human = new Human(data);
-                Realms.addHuman(human);
-            } catch (RealmsException e) {
-                e.printStackTrace();
-                return false;
+        if (humandata.listFiles() != null) {
+            for (File data : humandata.listFiles()) {
+                try {
+                    Human human = new Human(data);
+                    Realms.addHuman(human);
+                } catch (RealmsException e) {
+                    e.printStackTrace();
+                    return false;
+                }
             }
         }
 

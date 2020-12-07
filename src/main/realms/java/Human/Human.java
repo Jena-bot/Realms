@@ -1,6 +1,10 @@
 package main.realms.java.Human;
 
+import main.realms.java.Realm.Realm;
 import main.realms.java.RealmsMain;
+import main.realms.utils.RealmsException;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -13,29 +17,68 @@ public class Human {
     public Player player;
     public UUID uuid;
     public String title;
+    public Realm realm;
     private long played;
     private long online;
     private File data;
 
-    public Human(Player player) {
-        this.player = player;
-        this.uuid = player.getUniqueId();
-        this.title = "";
-        this.played = System.currentTimeMillis();
-        this.online = System.currentTimeMillis();
+    public Human(Player player, boolean create) throws RealmsException {
+        if (create) {
+            this.player = player;
+            this.uuid = player.getUniqueId();
+            this.title = "";
+            this.played = System.currentTimeMillis();
+            this.online = System.currentTimeMillis();
 
-        this.data = new File(RealmsMain.database, this.uuid.toString() + ".yml");
+            this.data = new File(RealmsMain.database + "/humans", this.uuid.toString() + ".yml");
+            YamlConfiguration config = new YamlConfiguration();
+
+            // configuration
+            try {
+                config.set("uuid", this.uuid.toString());
+                config.set("title", "");
+                config.set("played", System.currentTimeMillis());
+                config.set("online", System.currentTimeMillis());
+                config.save(data);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            this.data = new File(RealmsMain.database + "/humans", player.getUniqueId().toString() + ".yml");
+
+            // data loading
+            YamlConfiguration config = new YamlConfiguration();
+            try {
+                config.load(data);
+                this.uuid = player.getUniqueId();
+                this.title = config.getString("title");
+                this.played = config.getLong("played");
+                this.online = config.getLong("online");
+            } catch (IOException | InvalidConfigurationException e) {
+                throw new RealmsException("101");
+            }
+        }
+    }
+
+    public Human(File file) throws RealmsException {
         YamlConfiguration config = new YamlConfiguration();
 
-        // configuration
+        // File loading and var setting
         try {
-            config.set("uuid", this.uuid.toString());
-            config.set("title", "");
-            config.set("played", System.currentTimeMillis());
-            config.set("online", System.currentTimeMillis());
-            config.save(data);
-        } catch (IOException e) {
-            e.printStackTrace();
+            config.load(file);
+            this.player = Bukkit.getPlayer(UUID.fromString(config.getString("uuid")));
+            this.uuid = UUID.fromString(config.getString("uuid"));
+            this.data = file;
+
+            // title, separate due to "" being equal to null when in YAML configuration.
+            if (config.getString("title") == null) {
+                this.title = "";
+            } else {this.title = config.getString("title");}
+
+            this.played = config.getLong("played");
+            this.online = config.getLong("online");
+        } catch (InvalidConfigurationException | IOException e) {
+            throw new RealmsException("101");
         }
     }
 
@@ -56,10 +99,38 @@ public class Human {
     }
 
     public String getTitle() {
-        return title;
+        return title + " ";
     }
 
     public  void setTitle(String title) {
         this.title = title;
+    }
+
+    public long getOnline() {
+        return online;
+    }
+
+    public long getPlayed() {
+        return played;
+    }
+
+    public File getData() {
+        return data;
+    }
+
+    public Realm getRealm() {
+        return realm;
+    }
+
+    public void setRealm(Realm realm) {
+        this.realm = realm;
+    }
+
+    protected void setOnline(long online) {
+        this.online = online;
+    }
+
+    protected void setPlayed(long played) {
+        this.played = played;
     }
 }

@@ -7,39 +7,40 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Realms {
-    public List<Realm> realms = new LinkedList<>();
-    public List<Human> humans = new LinkedList<>();
+    public static List<Realm> realms = new LinkedList<>();
+    public static List<Human> humans = new LinkedList<>();
 
     // this is a quick class that allows for easy access to a list of realms and humans without having to look through files.
-    public List<Human> getHumans() {
+    public static List<Human> getHumans() {
         return humans;
     }
 
-    public List<Realm> getRealms() {
+    public static List<Realm> getRealms() {
         return realms;
     }
 
-    public void setHumans(List<Human> humans) {
-        this.humans = humans;
+    public static void setHumans(List<Human> humanlist) {
+        humans = humanlist;
     }
 
-    public void setRealms(List<Realm> realms) {
-        this.realms = realms;
+    public static void setRealms(List<Realm> realmslist) {
+        realms = realmslist;
     }
 
-    public void addRealm(Realm realm) {
+    public static void addRealm(Realm realm) {
         realms.add(realm);
     }
 
-    public void removeRealm(Realm realm) {
+    public static void removeRealm(Realm realm) {
         realms.remove(realm);
     }
 
-    public void addHuman(Human human) {
+    public static void addHuman(Human human) {
         humans.add(human);
     }
 
-    public void removeHuman(Human human) {
+    public static void removeHuman(Human human) {
         realms.remove(human);
     }
+
 }

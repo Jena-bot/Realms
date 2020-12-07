@@ -1,7 +1,7 @@
 package main.realms.utils;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 
 public class ChatInfo {
 
@@ -18,7 +18,7 @@ public class ChatInfo {
     }
 
     // open source code for sending a centered message
-    public static void sendCenteredMessage(Player player, String message) {
+    public static void sendCenteredMessage(CommandSender player, String message) {
         if (message == null || message.equals("")) player.sendMessage("");
         else {
             message = ChatColor.translateAlternateColorCodes('&', message);

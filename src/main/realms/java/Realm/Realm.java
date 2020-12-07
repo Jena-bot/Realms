@@ -7,27 +7,31 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 public class Realm {
-    public static Human owner;
-    public static List<Land> lands = new ArrayList<>();
-    public static List<Realm> vassals = new LinkedList<>();
-    private static File data;
+    public Human owner;
+    public String name;
+    public long registered;
+    public UUID uuid;
+    public List<Land> lands = new ArrayList<>();
+    public List<Realm> vassals = new LinkedList<>();
+    private File data;
 
-    public static Human getOwner() {
+    public Human getOwner() {
         return owner;
     }
 
-    public static List<Land> getLands() {
+    public List<Land> getLands() {
         return lands;
     }
 
-    public static List<Realm> getVassals() {
+    public List<Realm> getVassals() {
         return vassals;
     }
 
-    public static void setOwner(Human owner) {
-        Realm.owner = owner;
+    public void setOwner(Human owner) {
+        this.owner = owner;
     }
 
     public void addLand(Land land) {
@@ -36,5 +40,25 @@ public class Realm {
 
     public void addVassal(Realm realm) {
         vassals.add(realm);
+    }
+
+    public long getRegistered() {
+        return registered;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setRegistered(long registered) {
+        this.registered = registered;
     }
 }

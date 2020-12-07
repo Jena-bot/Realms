@@ -1,6 +1,10 @@
 package main.realms.java;
 
+import main.realms.java.Land.Land;
+import main.realms.java.Realm.Realm;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.List;
 
 public class RealmsMain extends JavaPlugin {
     public static String database = "plugins/Realms/data";

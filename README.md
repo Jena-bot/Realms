@@ -5,4 +5,4 @@ A simple dynamic land-claiming plugin. People can claim land, and vassalize othe
 
 ### Troubleshooting Guide
 - Task #101: Error while loading Human data file.
-- Task #102: Error while getting Human from Player.
+- Task #69: API Error while finding an object.

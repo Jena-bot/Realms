@@ -15,16 +15,18 @@ public class HumanCommand extends BukkitCommand {
     public static final SimpleDateFormat registeredFormat = new SimpleDateFormat("MMM d yyyy");
     public static final SimpleDateFormat lastOnlineFormat = new SimpleDateFormat("MMMMM dd '@' HH:mm");
 
-    protected HumanCommand(String name, List<String> aliases) {
+    public HumanCommand(String name, List<String> aliases, String permission) {
         super(name);
         this.description = "Check a person's status.";
         this.usageMessage = "/" + name + " <player>";
         setAliases(aliases);
+        setPermission(permission);
+
     }
 
     @Override
     public boolean execute(CommandSender cs, String s, String[] args) {
-        if (args.length >= 2) {
+        if (args.length >= 1 && cs.hasPermission(this.getPermission())) {
 
             // /command args[0] args[1] args[2]
             if (Bukkit.getPlayer(args[0]) != null) {
@@ -40,6 +42,10 @@ public class HumanCommand extends BukkitCommand {
                     e.printStackTrace();
                 }
             }
+        } else if (cs.hasPermission(this.getPermission())) {
+            cs.sendMessage(ChatInfo.prefix("&cNot enough arguments."));
+        } else {
+            cs.sendMessage(ChatInfo.prefix("&cYou don't have permission to do this command."));
         }
         return false;
     }

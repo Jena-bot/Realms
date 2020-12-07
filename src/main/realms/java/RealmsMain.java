@@ -1,14 +1,20 @@
 package main.realms.java;
 
 import main.realms.java.Human.Human;
+import main.realms.java.Human.HumanCommand;
+import main.realms.java.Human.HumanListener;
 import main.realms.utils.ChatInfo;
 import main.realms.utils.RealmsException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.v1_16_R2.CraftServer;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 
 public class RealmsMain extends JavaPlugin {
     public static String database = "plugins/Realms/data";
@@ -17,12 +23,29 @@ public class RealmsMain extends JavaPlugin {
     public void onLoad() {
         super.onLoad();
         saveDefaultConfig();
+
+        // to create data.
+        File file = new File(database);
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
     public void onEnable() {
         super.onEnable();
-        loadData();
+        if (!loadData())
+            this.getServer().getConsoleSender().sendMessage(ChatInfo.prefix("&cError loading data"));
+            this.getLogger().severe("ERROR: DATA WAS NOT LOADED CORRECTLY.");
+            this.getPluginLoader().disablePlugin(this);
+
+        registerSpecialCommands();
+
+        this.getServer().getPluginManager().registerEvents(new HumanListener(), this);
     }
 
     @Override
@@ -34,7 +57,10 @@ public class RealmsMain extends JavaPlugin {
     }
 
     private void registerSpecialCommands() {
-
+        // status command aliases
+        List<String> statalias = new ArrayList<>();
+        statalias.add("stat");
+        ((CraftServer) this.getServer()).getCommandMap().register("status", new HumanCommand("status", statalias, "realms.command.status"));
     }
 
     private boolean saveData() {
@@ -62,10 +88,11 @@ public class RealmsMain extends JavaPlugin {
         YamlConfiguration config = new YamlConfiguration();
 
         // Humans
-        File file = new File(database + "/humans");
+        File humandata = new File(database + "/humans");
         Realms.setHumans(new LinkedList<>());
 
-        for (File data : file.listFiles()) {
+
+        for (File data : Objects.requireNonNull(humandata.listFiles())) {
             try {
                 Human human = new Human(data);
                 Realms.addHuman(human);

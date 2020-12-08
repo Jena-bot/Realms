@@ -2,8 +2,7 @@ package main.realms.java.Human;
 
 import main.realms.java.RealmsAPI;
 import main.realms.utils.ChatInfo;
-import main.realms.utils.RealmsException;
-import org.bukkit.Bukkit;
+import main.realms.utils.exceptions.NotFoundException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 
@@ -26,26 +25,32 @@ public class HumanCommand extends BukkitCommand {
 
     @Override
     public boolean execute(CommandSender cs, String s, String[] args) {
+        //todo allow for extra arguments
         if (args.length >= 1 && cs.hasPermission(this.getPermission())) {
 
             // /command args[0] args[1] args[2]
-            if (Bukkit.getOfflinePlayer(args[0]) != null) {
-                try {
-                    Human human = RealmsAPI.getHuman(Bukkit.getOfflinePlayer(args[0]).getUniqueId());
+            try {
+                Human human = RealmsAPI.getHuman(args[0]);
 
-                    //todo move formatting to Formatter.java
-                    ChatInfo.sendCenteredMessage(cs, ChatInfo.color("&8&m-----------------&r &6&l" + human.getTitle().toUpperCase() + human.getPlayer().getName().toUpperCase() + " &8&m-----------------&r"));
-                    if (human.getRealm() != null) ChatInfo.sendCenteredMessage(cs, "&e" + human.getTitle().replace(" ", "")+ " of &6&l" + human.getRealm().getName().toUpperCase());
-                    ChatInfo.sendCenteredMessage(cs, "&eJoined on " + registeredFormat.format(human.getPlayed()));
-                    ChatInfo.sendCenteredMessage(cs, "&eLast Online " + lastOnlineFormat.format(human.getPlayed()));
-                } catch (RealmsException e) {
-                    e.printStackTrace();
-                }
-            } else {
+                //todo move formatting to Formatter.java
+                ChatInfo.sendCenteredMessage(cs, ChatInfo.color("&8&m-----------------&r &6&l" + human.getTitle().toUpperCase() + human.getPlayer().getName().toUpperCase() + " &8&m-----------------&r"));
+                if (human.getRealm() != null)
+                    ChatInfo.sendCenteredMessage(cs, "&6&l" + human.getTitle().replace(" ", "") + "&e of &6&l" + human.getRealm().getName().toUpperCase());
+                ChatInfo.sendCenteredMessage(cs, "&eJoined on " + registeredFormat.format(human.getPlayed()));
+                ChatInfo.sendCenteredMessage(cs, "&eLast Online on " + lastOnlineFormat.format(human.getPlayed()));
+            } catch (NotFoundException e) {
                 cs.sendMessage(ChatInfo.prefix("&c" + args[0] + " is not a valid player."));
             }
         } else if (cs.hasPermission(this.getPermission())) {
-            cs.sendMessage(ChatInfo.prefix("&cNot enough arguments."));
+            try {
+                Human human = RealmsAPI.getHuman(cs.getName());
+
+                //todo move formatting to Formatter.java
+                ChatInfo.sendCenteredMessage(cs, ChatInfo.color("&8&m-----------------&r &6&l" + human.getTitle().toUpperCase() + human.getPlayer().getName().toUpperCase() + " &8&m-----------------&r"));
+                if (human.getRealm() != null) ChatInfo.sendCenteredMessage(cs, "&6&l" + human.getTitle().replace(" ", "") + "&e of &6&l" + human.getRealm().getName().toUpperCase());
+                ChatInfo.sendCenteredMessage(cs, "&eJoined on " + registeredFormat.format(human.getPlayed()));
+                ChatInfo.sendCenteredMessage(cs, "&eLast Online on " + lastOnlineFormat.format(human.getPlayed()));
+            } catch (NotFoundException e) {e.printStackTrace();}
         } else {
             cs.sendMessage(ChatInfo.prefix("&cYou don't have permission to do this command."));
         }

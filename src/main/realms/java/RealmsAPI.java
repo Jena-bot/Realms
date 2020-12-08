@@ -2,7 +2,8 @@ package main.realms.java;
 
 import main.realms.java.Human.Human;
 import main.realms.java.Realm.Realm;
-import main.realms.utils.NotFoundException;
+import main.realms.java.objects.PlayerCache;
+import main.realms.utils.exceptions.NotFoundException;
 import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
 import org.bukkit.entity.Player;
 
@@ -28,7 +29,7 @@ public class RealmsAPI {
     @Nullable
     public static Human getHuman(String name) throws NotFoundException {
         for (Human human : Realms.getHumans()) {
-            if (human.getName() == name) {
+            if (human.getName().equals(name)) {
                 return human;
             }
         }
@@ -44,6 +45,14 @@ public class RealmsAPI {
     @Nullable
     public static Realm getRealm(String name) throws NotFoundException {
         for (Realm realm : Realms.getRealms()) if (realm.getName().equals(name)) return realm;
+        throw new NotFoundException();
+    }
+
+    @Nullable
+    public static PlayerCache getPlayerCache(Player player) throws NotFoundException {
+        for (PlayerCache cache : Realms.getCaches()) {
+            if (cache.getPlayer() == player.getUniqueId()) return cache;
+        }
         throw new NotFoundException();
     }
 }

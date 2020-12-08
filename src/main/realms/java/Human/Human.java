@@ -2,7 +2,7 @@ package main.realms.java.Human;
 
 import main.realms.java.Realm.Realm;
 import main.realms.java.RealmsMain;
-import main.realms.utils.RealmsException;
+import main.realms.utils.exceptions.RealmsException;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -18,10 +18,10 @@ public class Human {
     public String name;
     public UUID uuid;
     public String title;
-    public Realm realm;
+    public Realm realm = null;
     private long played;
     private long online;
-    private File data;
+    private final File data;
 
     public Human(Player player, boolean create) throws RealmsException {
         if (create) {

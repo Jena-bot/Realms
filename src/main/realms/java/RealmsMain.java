@@ -4,7 +4,7 @@ import main.realms.java.Human.Human;
 import main.realms.java.Human.HumanCommand;
 import main.realms.java.Human.HumanListener;
 import main.realms.utils.ChatInfo;
-import main.realms.utils.RealmsException;
+import main.realms.utils.exceptions.RealmsException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_16_R2.CraftServer;
 import org.bukkit.plugin.java.JavaPlugin;

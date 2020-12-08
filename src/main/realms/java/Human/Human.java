@@ -98,7 +98,9 @@ public class Human {
         this.uuid = uuid;
 
         // to update RealmsAPI
-
+        for (Human human : RealmsMain.humans) {
+            if (human.getName() == getName()) RealmsMain.humans.remove(human); RealmsMain.humans.add(this);
+        }
     }
 
     public String getTitle() {

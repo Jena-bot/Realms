@@ -1,5 +1,7 @@
 package main.realms.java.objects;
 
+import main.realms.java.Land.Land;
+import main.realms.java.RealmsAPI;
 import main.realms.utils.Coord;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -8,7 +10,7 @@ import org.bukkit.World;
 @SuppressWarnings("unused")
 public class WorldCoord extends Coord {
 
-    // github.com/TownyAdvanced/Towny
+    // Inspired by github.com/TownyAdvanced/Towny
     public Chunk chunk;
     private String worldname;
 
@@ -56,5 +58,14 @@ public class WorldCoord extends Coord {
 
     public void setWorld(World world) {
         this.worldname = world.getName();
+    }
+
+    public boolean hasLand() {
+        if (RealmsAPI.getLand(this) != null) return true;
+        return false;
+    }
+
+    public Land getLand() {
+        return RealmsAPI.getLand(this);
     }
 }

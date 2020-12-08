@@ -1,14 +1,18 @@
 package main.realms.java;
 
 import main.realms.java.Human.Human;
+import main.realms.java.Land.Land;
 import main.realms.java.Realm.Realm;
 import main.realms.java.objects.PlayerCache;
+import main.realms.java.objects.WorldCoord;
 import main.realms.utils.exceptions.NotFoundException;
 import main.realms.utils.exceptions.RealmsException;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class RealmsAPI {
@@ -34,6 +38,26 @@ public class RealmsAPI {
     @Nullable
     public static Human getHuman(String name) throws RealmsException {
         return getExactHuman(Bukkit.getOfflinePlayer(name).getUniqueId().toString());
+    }
+
+    // Land
+    @Nullable
+    public static Land getLand(WorldCoord coord) {
+        for (Land land : RealmsMain.lands) if (land.coord == coord) return land;
+        return null;
+    }
+
+    @Nullable
+    public static Land getLand(UUID uuid) {
+        for (Land land : RealmsMain.lands) if (land.uuid == uuid) return land;
+        return null;
+    }
+
+    @Nullable
+    public static List<Land> getOwnedLand(Human human) {
+        List<Land> lands = new ArrayList<>();
+        for (Land land : RealmsMain.lands) if (land.getOwner() == human) lands.add(land);
+        return lands;
     }
 
     @Nullable

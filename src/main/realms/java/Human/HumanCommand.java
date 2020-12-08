@@ -37,7 +37,7 @@ public class HumanCommand extends BukkitCommand {
                 if (human.getRealm() != null)
                     ChatInfo.sendCenteredMessage(cs, "&6&l" + human.getTitle().replace(" ", "") + "&e of &6&l" + human.getRealm().getName().toUpperCase());
                 ChatInfo.sendCenteredMessage(cs, "&eJoined on " + registeredFormat.format(human.getPlayed()));
-                if (!human.isOnline()) ChatInfo.sendCenteredMessage(cs, "&aCurrently Online!");
+                if (human.isOnline()) ChatInfo.sendCenteredMessage(cs, "&aCurrently Online!");
                 else ChatInfo.sendCenteredMessage(cs, "&eLast Online on " + lastOnlineFormat.format(System.currentTimeMillis()));
             } catch (RealmsException e) {
                 cs.sendMessage(ChatInfo.prefix("&c" + args[0] + " is not a valid player."));
@@ -50,6 +50,7 @@ public class HumanCommand extends BukkitCommand {
                 ChatInfo.sendCenteredMessage(cs, ChatInfo.color("&8&m-----------------&r &6&l" + human.getTitle().toUpperCase() + human.getPlayer().getName().toUpperCase() + " &8&m-----------------&r"));
                 if (human.getRealm() != null) ChatInfo.sendCenteredMessage(cs, "&6&l" + human.getTitle().replace(" ", "") + "&e of &6&l" + human.getRealm().getName().toUpperCase());
                 ChatInfo.sendCenteredMessage(cs, "&eJoined on " + registeredFormat.format(human.getPlayed()));
+                ChatInfo.sendCenteredMessage(cs, "&aYou're currently online!");
             } catch (RealmsException e) {e.printStackTrace();}
         } else {
             cs.sendMessage(ChatInfo.prefix("&cYou don't have permission to do this command."));

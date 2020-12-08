@@ -3,6 +3,7 @@ package main.realms.java;
 import main.realms.java.Human.Human;
 import main.realms.java.Human.HumanCommand;
 import main.realms.java.Human.HumanListener;
+import main.realms.java.Land.Land;
 import main.realms.utils.ChatInfo;
 import main.realms.utils.exceptions.RealmsException;
 import org.bukkit.Bukkit;
@@ -17,7 +18,10 @@ import java.util.List;
 
 public class RealmsMain extends JavaPlugin {
     public static String database = "plugins/Realms/data";
+
+    // caching, files are saved using runnable, till then stored in memory.
     public static List<Human> humans = new ArrayList<>();
+    public static List<Land> lands = new ArrayList<>();
     private static final Runnable save = RealmsMain::saveData;
 
     @Override
@@ -81,6 +85,15 @@ public class RealmsMain extends JavaPlugin {
             }
         }
 
+        config = new YamlConfiguration();
+        // Lands
+        for (Land land : lands) {
+            config.set("uuid", land.getUuid());
+            config.set("owner", land.getOwner().getUuid());
+            config.set("coord", land.coord.getWorldname() + "," + land.coord.getX() + "," + land.coord.getZ());
+            //todo realms
+        }
+
         return true;
     }
 
@@ -97,6 +110,18 @@ public class RealmsMain extends JavaPlugin {
                 } catch (RealmsException e) {
                     e.printStackTrace();
                     return false;
+                }
+            }
+        }
+
+        // Lands
+        File landsDATA = new File("plugins/Realms/data/humans");
+        if (landsDATA.listFiles() != null) {
+            for (File file : landsDATA.listFiles()) {
+                try {
+                    lands.add(new Land(file));
+                } catch (RealmsException e) {
+                    e.printStackTrace();
                 }
             }
         }

@@ -22,10 +22,10 @@ public class HumanListener implements Listener {
     public static void onJoin(PlayerJoinEvent event) {
         // todo add something to counter name changes
         try {
-            RealmsAPI.getHuman(event.getPlayer()).setOnline(System.currentTimeMillis());
-        } catch (NotFoundException e) {
+            RealmsAPI.getHuman(event.getPlayer());
+        } catch (RealmsException e) {
             try {
-                Realms.addHuman(new Human(event.getPlayer(), true));
+                RealmsMain.humans.add(new Human(event.getPlayer(), true));
             } catch (RealmsException ee) {
                 ee.printStackTrace();
             }
@@ -40,21 +40,20 @@ public class HumanListener implements Listener {
 
     @EventHandler
     public static void onLeave(PlayerQuitEvent event) throws RealmsException {
-        for (Human human : Realms.getHumans()) {
-            if (human.getUuid() == event.getPlayer().getUniqueId()) {
-                human.setOnline(System.currentTimeMillis());
-                return;
-            }
-        }
-
-        Realms.addHuman(new Human(event.getPlayer(), true));
+        Human human = RealmsAPI.getHuman(event.getPlayer());
+        RealmsMain.humans.remove(human);
+        human.setOnline(System.currentTimeMillis());
+        RealmsMain.humans.add(human);
     }
 
 
     // debug
     @EventHandler
-    public static void onCommand(PlayerCommandPreprocessEvent event) {
+    public static void onCommand(PlayerCommandPreprocessEvent event) throws RealmsException {
         if (event.getMessage().contains("saverealmsdata")) RealmsMain.saveData();
+        if (event.getMessage().contains("flushcache")) {
+            Realms.getHumans().forEach(human -> event.getPlayer().sendMessage(human.getName()));
+        }
     }
 
     @EventHandler
@@ -70,13 +69,13 @@ public class HumanListener implements Listener {
             Realms.addCache(cache);
         }
 
-        if (event.getTo().getChunk() != event.getFrom().getChunk()) {
+        if (event.getTo().getChunk() != cache.getLastWorldCoord().getChunk()) {
             try {
                 HumanChunkChangeEvent chunkChangeEvent = new HumanChunkChangeEvent(new WorldCoord(event.getFrom().getWorld().getName(), event.getFrom().getChunk()),
                         new WorldCoord(event.getTo().getWorld().getName(), event.getTo().getChunk()),
                         RealmsAPI.getHuman(event.getPlayer()));
                 Bukkit.getServer().getPluginManager().callEvent(chunkChangeEvent);
-            } catch (NotFoundException e) {
+            } catch (RealmsException e) {
                 e.printStackTrace();
             }
         }

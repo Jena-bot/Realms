@@ -31,7 +31,7 @@ public class Human {
             this.played = System.currentTimeMillis();
             this.online = System.currentTimeMillis();
 
-            this.data = new File(RealmsMain.database + "/humans", this.uuid.toString() + ".yml");
+            this.data = new File(RealmsMain.database + "/humans", this.uuid.toString());
             YamlConfiguration config = new YamlConfiguration();
 
             // configuration
@@ -46,7 +46,7 @@ public class Human {
                 e.printStackTrace();
             }
         } else {
-            this.data = new File(RealmsMain.database + "/humans", player.getUniqueId().toString() + ".yml");
+            this.data = new File(RealmsMain.database + "/humans", player.getUniqueId().toString());
 
             // data loading
             YamlConfiguration config = new YamlConfiguration();
@@ -96,6 +96,9 @@ public class Human {
 
     private void setUuid(UUID uuid) {
         this.uuid = uuid;
+
+        // to update RealmsAPI
+
     }
 
     public String getTitle() {
@@ -104,6 +107,11 @@ public class Human {
 
     public  void setTitle(String title) {
         this.title = title;
+
+        // to update RealmsAPI
+        for (Human human : RealmsMain.humans) {
+            if (human.getUuid() == getUuid()) RealmsMain.humans.remove(human); RealmsMain.humans.add(this);
+        }
     }
 
     public long getOnline() {
@@ -124,14 +132,29 @@ public class Human {
 
     public void setRealm(Realm realm) {
         this.realm = realm;
+
+        // to update RealmsAPI
+        for (Human human : RealmsMain.humans) {
+            if (human.getUuid() == getUuid()) RealmsMain.humans.remove(human); RealmsMain.humans.add(this);
+        }
     }
 
     protected void setOnline(long online) {
         this.online = online;
+
+        // to update RealmsAPI
+        for (Human human : RealmsMain.humans) {
+            if (human.getUuid() == getUuid()) RealmsMain.humans.remove(human); RealmsMain.humans.add(this);
+        }
     }
 
     protected void setPlayed(long played) {
         this.played = played;
+
+        // to update RealmsAPI
+        for (Human human : RealmsMain.humans) {
+            if (human.getUuid() == getUuid()) RealmsMain.humans.remove(human); RealmsMain.humans.add(this);
+        }
     }
 
     public String getName() {
@@ -140,5 +163,17 @@ public class Human {
 
     public void setName(String name) {
         this.name = name;
+
+        // to update RealmsAPI
+        for (Human human : RealmsMain.humans) {
+            if (human.getUuid() == getUuid()) RealmsMain.humans.remove(human); RealmsMain.humans.add(this);
+        }
+    }
+
+    public boolean isOnline() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player.getUniqueId() == player.getUniqueId()) return true;
+        }
+        return false;
     }
 }

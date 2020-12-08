@@ -4,19 +4,21 @@ import main.realms.java.Human.Human;
 import main.realms.java.Land.Land;
 import main.realms.java.Realm.Realm;
 import main.realms.java.objects.PlayerCache;
+import main.realms.utils.exceptions.RealmsException;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Realms {
-    public static List<Realm> realms = new ArrayList<>();
-    public static List<Human> humans = new ArrayList<>();
-    public static List<Land> lands = new ArrayList<>();
-    public static List<PlayerCache> caches = new ArrayList<>();
+    public static List<Realm> realms = new LinkedList<>();
+    public static List<Land> lands = new LinkedList<>();
+    public static List<PlayerCache> caches = new LinkedList<>();
+    private static final File[] dbHuman = new File(RealmsMain.database + "/humans").listFiles();
 
     // this is a quick class that allows for easy access to a list of realms and humans without having to look through files.
-    public static List<Human> getHumans() {
-        return Realms.humans;
+    public static List<Human> getHumans() throws RealmsException {
+        return RealmsMain.humans;
     }
 
     public static List<Realm> getRealms() {
@@ -29,10 +31,6 @@ public class Realms {
 
     public static void setLands(List<Land> lands) {
         Realms.lands = lands;
-    }
-
-    public static void setHumans(List<Human> humanlist) {
-        Realms.humans = humanlist;
     }
 
     public static void setRealms(List<Realm> realmslist) {
@@ -53,14 +51,6 @@ public class Realms {
 
     public static void removeRealm(Realm realm) {
         Realms.realms.remove(realm);
-    }
-
-    public static void addHuman(Human human) {
-        Realms.humans.add(human);
-    }
-
-    public static void removeHuman(Human human) {
-        Realms.humans.remove(human);
     }
 
     public static List<PlayerCache> getCaches() {

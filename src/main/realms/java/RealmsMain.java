@@ -5,6 +5,7 @@ import main.realms.java.Human.HumanCommand;
 import main.realms.java.Human.HumanListener;
 import main.realms.utils.ChatInfo;
 import main.realms.utils.exceptions.RealmsException;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_16_R2.CraftServer;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -12,11 +13,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class RealmsMain extends JavaPlugin {
     public static String database = "plugins/Realms/data";
+    public static List<Human> humans = new ArrayList<>();
+    private static final Runnable save = RealmsMain::saveData;
 
     @Override
     public void onLoad() {
@@ -37,6 +39,7 @@ public class RealmsMain extends JavaPlugin {
             this.getServer().getConsoleSender().sendMessage(ChatInfo.prefix("&cError loading data"));
             this.getLogger().severe("ERROR: DATA WAS NOT LOADED CORRECTLY.");
         }
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, save, 1200, 1200);
 
         registerSpecialCommands();
 
@@ -63,7 +66,7 @@ public class RealmsMain extends JavaPlugin {
         YamlConfiguration config = new YamlConfiguration();
 
         // Humans
-        for (Human human : Realms.getHumans()) {
+        for (Human human : humans) {
             config.set("name", human.getName());
             config.set("uuid", human.getUuid().toString());
             config.set("title", human.getTitle());
@@ -83,16 +86,14 @@ public class RealmsMain extends JavaPlugin {
 
     private boolean loadData() {
         YamlConfiguration config = new YamlConfiguration();
+        humans = new ArrayList<>();
 
         // Humans
-        File humandata = new File(database + "/humans");
-        Realms.setHumans(new LinkedList<>());
-
-        if (humandata.listFiles() != null) {
-            for (File data : humandata.listFiles()) {
+        File humanDATA = new File("plugins/Realms/data/humans");
+        if (humanDATA.listFiles() != null) {
+            for (File file : humanDATA.listFiles()) {
                 try {
-                    Human human = new Human(data);
-                    Realms.addHuman(human);
+                    humans.add(new Human(file));
                 } catch (RealmsException e) {
                     e.printStackTrace();
                     return false;

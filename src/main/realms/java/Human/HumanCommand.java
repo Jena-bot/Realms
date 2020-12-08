@@ -2,7 +2,7 @@ package main.realms.java.Human;
 
 import main.realms.java.RealmsAPI;
 import main.realms.utils.ChatInfo;
-import main.realms.utils.exceptions.NotFoundException;
+import main.realms.utils.exceptions.RealmsException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 
@@ -37,8 +37,9 @@ public class HumanCommand extends BukkitCommand {
                 if (human.getRealm() != null)
                     ChatInfo.sendCenteredMessage(cs, "&6&l" + human.getTitle().replace(" ", "") + "&e of &6&l" + human.getRealm().getName().toUpperCase());
                 ChatInfo.sendCenteredMessage(cs, "&eJoined on " + registeredFormat.format(human.getPlayed()));
-                ChatInfo.sendCenteredMessage(cs, "&eLast Online on " + lastOnlineFormat.format(human.getPlayed()));
-            } catch (NotFoundException e) {
+                if (!human.isOnline()) ChatInfo.sendCenteredMessage(cs, "&aCurrently Online!");
+                else ChatInfo.sendCenteredMessage(cs, "&eLast Online on " + lastOnlineFormat.format(System.currentTimeMillis()));
+            } catch (RealmsException e) {
                 cs.sendMessage(ChatInfo.prefix("&c" + args[0] + " is not a valid player."));
             }
         } else if (cs.hasPermission(this.getPermission())) {
@@ -49,8 +50,7 @@ public class HumanCommand extends BukkitCommand {
                 ChatInfo.sendCenteredMessage(cs, ChatInfo.color("&8&m-----------------&r &6&l" + human.getTitle().toUpperCase() + human.getPlayer().getName().toUpperCase() + " &8&m-----------------&r"));
                 if (human.getRealm() != null) ChatInfo.sendCenteredMessage(cs, "&6&l" + human.getTitle().replace(" ", "") + "&e of &6&l" + human.getRealm().getName().toUpperCase());
                 ChatInfo.sendCenteredMessage(cs, "&eJoined on " + registeredFormat.format(human.getPlayed()));
-                ChatInfo.sendCenteredMessage(cs, "&eLast Online on " + lastOnlineFormat.format(human.getPlayed()));
-            } catch (NotFoundException e) {e.printStackTrace();}
+            } catch (RealmsException e) {e.printStackTrace();}
         } else {
             cs.sendMessage(ChatInfo.prefix("&cYou don't have permission to do this command."));
         }

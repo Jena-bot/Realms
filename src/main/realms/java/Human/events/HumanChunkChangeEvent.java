@@ -2,6 +2,7 @@ package main.realms.java.Human.events;
 
 import main.realms.java.Human.Human;
 import main.realms.java.objects.WorldCoord;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
@@ -26,6 +27,9 @@ public class HumanChunkChangeEvent extends Event {
         this.from = from;
         this.to = to;
         this.human = human;
+
+        //todo config option
+        Bukkit.broadcastMessage("run event");
     }
 
     public Human getHuman() {

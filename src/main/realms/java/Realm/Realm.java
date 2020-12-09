@@ -5,7 +5,6 @@ import main.realms.java.Land.Land;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,7 +14,7 @@ public class Realm {
     public long registered;
     public UUID uuid;
     public List<Land> lands = new ArrayList<>();
-    public List<Realm> vassals = new LinkedList<>();
+    public List<Realm> vassals = new ArrayList<>();
     private File data;
 
     public Human getOwner() {

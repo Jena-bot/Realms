@@ -34,7 +34,7 @@ public class HumanCommand extends BukkitCommand {
                 Human human = RealmsAPI.getHuman(args[0]);
 
                 //todo move formatting to Formatter.java
-                ChatInfo.sendCenteredMessage(cs, ChatInfo.color("&8&m-----------------&r &6&l" + human.getTitle().toUpperCase() + human.getName().toUpperCase() + " &8&m-----------------&r"));
+                ChatInfo.sendCenteredMessage(cs, "&8&m-----------------&r &6&l" + human.getTitle().toUpperCase() + human.getName().toUpperCase() + " &8&m-----------------&r");
                 if (human.getRealm() != null)
                     ChatInfo.sendCenteredMessage(cs, "&6&l" + human.getTitle().replace(" ", "") + "&e of &6&l" + human.getRealm().getName().toUpperCase());
                 ChatInfo.sendCenteredMessage(cs, "&eJoined on " + registeredFormat.format(human.getPlayed()));

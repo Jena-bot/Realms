@@ -3,11 +3,10 @@ package main.realms.java;
 import main.realms.java.Human.Human;
 import main.realms.java.Land.Land;
 import main.realms.java.Realm.Realm;
-import main.realms.java.objects.PlayerCache;
-import main.realms.java.objects.WorldCoord;
 import main.realms.utils.exceptions.NotFoundException;
 import main.realms.utils.exceptions.RealmsException;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
 import org.bukkit.entity.Player;
 
@@ -42,22 +41,29 @@ public class RealmsAPI {
 
     // Land
     @Nullable
-    public static Land getLand(WorldCoord coord) {
-        for (Land land : RealmsMain.lands) if (land.coords.contains(coord)) return land;
+    public static Land getLand(Chunk chunk) {
+        for (Land land : RealmsMain.lands) if (land.chunks.contains(chunk)) return land;
         return null;
     }
 
     @Nullable
-    public static Land getLand(UUID uuid) {
+    public static Land getLand(UUID uuid) throws NotFoundException {
         for (Land land : RealmsMain.lands) if (land.uuid == uuid) return land;
-        return null;
+        throw new NotFoundException();
     }
 
     @Nullable
-    public static List<Land> getOwnedLand(Human human) {
+    public static Land getLand(String name) throws NotFoundException {
+        for (Land land : RealmsMain.lands) if (land.name.equalsIgnoreCase(name)) return land;
+        throw new NotFoundException();
+    }
+
+    @Nullable
+    public static List<Land> getOwnedLand(Human human) throws NotFoundException {
         List<Land> lands = new ArrayList<>();
         for (Land land : RealmsMain.lands) if (land.getOwner() == human) lands.add(land);
-        return lands;
+        if (lands.toArray().length == 0) throw new NotFoundException();
+        else return lands;
     }
 
     @Nullable
@@ -69,14 +75,6 @@ public class RealmsAPI {
     @Nullable
     public static Realm getRealm(String name) throws NotFoundException {
         for (Realm realm : Realms.getRealms()) if (realm.getName().equals(name)) return realm;
-        throw new NotFoundException();
-    }
-
-    @Nullable
-    public static PlayerCache getPlayerCache(Player player) throws NotFoundException {
-        for (PlayerCache cache : Realms.getCaches()) {
-            if (cache.getPlayer() == player.getUniqueId()) return cache;
-        }
         throw new NotFoundException();
     }
 }

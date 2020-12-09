@@ -1,15 +1,15 @@
 package main.realms.java.Human.events;
 
 import main.realms.java.Human.Human;
-import main.realms.java.objects.WorldCoord;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 public class HumanChunkChangeEvent extends Event {
-    private final HandlerList handlerList = new HandlerList();
-    public WorldCoord from;
-    public WorldCoord to;
+    private static final HandlerList handlerList = new HandlerList();
+    public Chunk from;
+    public Chunk to;
     public Human human;
 
     @Override
@@ -17,12 +17,12 @@ public class HumanChunkChangeEvent extends Event {
         return handlerList;
     }
 
-    public HandlerList getHandlerList() {
+    public static HandlerList getHandlerList() {
         return handlerList;
     }
 
-    public HumanChunkChangeEvent(WorldCoord from,
-                                 WorldCoord to,
+    public HumanChunkChangeEvent(Chunk from,
+                                 Chunk to,
                                  Human human) {
         this.from = from;
         this.to = to;
@@ -36,11 +36,11 @@ public class HumanChunkChangeEvent extends Event {
         return human;
     }
 
-    public WorldCoord getFrom() {
+    public Chunk getFrom() {
         return from;
     }
 
-    public WorldCoord getTo() {
+    public Chunk getTo() {
         return to;
     }
 }

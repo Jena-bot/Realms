@@ -98,9 +98,8 @@ public class Human {
         this.uuid = uuid;
 
         // to update RealmsAPI
-        for (Human human : RealmsMain.humans) {
-            if (human.getName() == getName()) RealmsMain.humans.remove(human); RealmsMain.humans.add(this);
-        }
+        RealmsMain.humans.removeIf(human -> human.getName() == getName());
+        RealmsMain.humans.add(this);
     }
 
     public String getTitle() {
@@ -111,9 +110,8 @@ public class Human {
         this.title = title;
 
         // to update RealmsAPI
-        for (Human human : RealmsMain.humans) {
-            if (human.getUuid() == getUuid()) RealmsMain.humans.remove(human); RealmsMain.humans.add(this);
-        }
+        RealmsMain.humans.removeIf(human -> human.getUuid() == getUuid());
+        RealmsMain.humans.add(this);
     }
 
     public long getOnline() {
@@ -136,27 +134,24 @@ public class Human {
         this.realm = realm;
 
         // to update RealmsAPI
-        for (Human human : RealmsMain.humans) {
-            if (human.getUuid() == getUuid()) RealmsMain.humans.remove(human); RealmsMain.humans.add(this);
-        }
+        RealmsMain.humans.removeIf(human -> human.getUuid() == getUuid());
+        RealmsMain.humans.add(this);
     }
 
     protected void setOnline(long online) {
         this.online = online;
 
         // to update RealmsAPI
-        for (Human human : RealmsMain.humans) {
-            if (human.getUuid() == getUuid()) RealmsMain.humans.remove(human); RealmsMain.humans.add(this);
-        }
+        RealmsMain.humans.removeIf(human -> human.getUuid() == getUuid());
+        RealmsMain.humans.add(this);
     }
 
     protected void setPlayed(long played) {
         this.played = played;
 
         // to update RealmsAPI
-        for (Human human : RealmsMain.humans) {
-            if (human.getUuid() == getUuid()) RealmsMain.humans.remove(human); RealmsMain.humans.add(this);
-        }
+        RealmsMain.humans.removeIf(human -> human.getUuid() == getUuid());
+        RealmsMain.humans.add(this);
     }
 
     public String getName() {
@@ -167,9 +162,8 @@ public class Human {
         this.name = name;
 
         // to update RealmsAPI
-        for (Human human : RealmsMain.humans) {
-            if (human.getUuid() == getUuid()) RealmsMain.humans.remove(human); RealmsMain.humans.add(this);
-        }
+        RealmsMain.humans.removeIf(human -> human.getUuid() == getUuid());
+        RealmsMain.humans.add(this);
     }
 
     public boolean isOnline() {

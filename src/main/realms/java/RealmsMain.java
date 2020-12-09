@@ -4,10 +4,12 @@ import main.realms.java.Human.Human;
 import main.realms.java.Human.HumanCommand;
 import main.realms.java.Human.HumanListener;
 import main.realms.java.Land.Land;
-import main.realms.java.objects.WorldCoord;
+import main.realms.java.Land.LandCommand;
+import main.realms.java.Land.LandListener;
 import main.realms.utils.ChatInfo;
 import main.realms.utils.exceptions.RealmsException;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_16_R2.CraftServer;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,7 +29,6 @@ public class RealmsMain extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        super.onLoad();
         saveDefaultConfig();
 
         // to create data.
@@ -39,16 +40,16 @@ public class RealmsMain extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        super.onEnable();
         if (!loadData()) {
             this.getServer().getConsoleSender().sendMessage(ChatInfo.prefix("&cError loading data"));
             this.getLogger().severe("ERROR: DATA WAS NOT LOADED CORRECTLY.");
         }
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, save, 1200, 1200);
-
         registerSpecialCommands();
 
-        this.getServer().getPluginManager().registerEvents(new HumanListener(), this);
+        // registering listeners
+        Bukkit.getPluginManager().registerEvents(new HumanListener(), this);
+        Bukkit.getPluginManager().registerEvents(new LandListener(), this);
     }
 
     @Override
@@ -65,6 +66,11 @@ public class RealmsMain extends JavaPlugin {
         List<String> statalias = new ArrayList<>();
         statalias.add("stat");
         ((CraftServer) this.getServer()).getCommandMap().register("status", new HumanCommand("status", statalias, "realms.command.status"));
+
+        // land command
+        List<String> landalias = new ArrayList<>();
+        landalias.add("l");
+        ((CraftServer) this.getServer()).getCommandMap().register("land", new LandCommand("land", statalias, "realms.command.land"));
     }
 
     public static boolean saveData() {
@@ -94,9 +100,9 @@ public class RealmsMain extends JavaPlugin {
 
             // multiple chunks
             List<String> coordlist = new ArrayList<>();
-            for (WorldCoord coord : land.getCoords())
-                coordlist.add(coord.getWorldname() + "," + coord.getX() + "," + coord.getZ());
-            config.set("coods", coordlist);
+            for (Chunk chunk : land.getChunks())
+                coordlist.add(chunk.getWorld().getName() + "," + chunk.getX() + "," + chunk.getZ());
+            config.set("coords", coordlist);
 
             //todo realms
         }
@@ -105,7 +111,6 @@ public class RealmsMain extends JavaPlugin {
     }
 
     private boolean loadData() {
-        YamlConfiguration config = new YamlConfiguration();
         humans = new ArrayList<>();
 
         // Humans
@@ -121,8 +126,9 @@ public class RealmsMain extends JavaPlugin {
             }
         }
 
+        lands = new ArrayList<>();
         // Lands
-        File landsDATA = new File("plugins/Realms/data/humans");
+        File landsDATA = new File("plugins/Realms/data/lands");
         if (landsDATA.listFiles() != null) {
             for (File file : landsDATA.listFiles()) {
                 try {

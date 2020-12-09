@@ -11,6 +11,10 @@ permissions:
   realms.command.*:
     children:
       - realms.command.status
+      - realms.command.land
 
   realms.command.status:
-    description: allows players to check a person's realms status.
+    description: allows players to check a person's status.
+
+  realms.command.land:
+    description: allows players to check a land's status;

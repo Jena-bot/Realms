@@ -43,7 +43,7 @@ public class RealmsAPI {
     // Land
     @Nullable
     public static Land getLand(WorldCoord coord) {
-        for (Land land : RealmsMain.lands) if (land.coord == coord) return land;
+        for (Land land : RealmsMain.lands) if (land.coords.contains(coord)) return land;
         return null;
     }
 

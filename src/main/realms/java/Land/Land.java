@@ -11,20 +11,22 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Land {
     public String name;
     public UUID uuid;
-    public WorldCoord coord;
+    public List<WorldCoord> coords;
     public Realm realm;
     public Human owner;
     private File data;
 
     //todo contructors
-    public Land(WorldCoord coord, Human owner, String name) {
+    public Land(List<WorldCoord> coords, Human owner, String name) {
         this.name = name;
-        this.coord = coord;
+        this.coords = coords;
         this.owner = owner;
         this.realm = owner.getRealm();
         this.uuid = UUID.randomUUID();
@@ -33,7 +35,13 @@ public class Land {
         YamlConfiguration config = new YamlConfiguration();
         try {
             config.set("name", name);
-            config.set("coord", coord.getWorldname() + "," + coord.getX() + "," + coord.getZ());
+
+            // multiple chunks
+            List<String> coordlist = new ArrayList<>();
+            for (WorldCoord coord : coords)
+                coordlist.add(coord.getWorldname() + "," + coord.getX() + "," + coord.getZ());
+            config.set("coods", coordlist);
+
             config.set("owner", owner.getUuid().toString());
             config.set("realm", realm.getUuid().toString());
             config.set("uuid", uuid.toString());
@@ -41,8 +49,8 @@ public class Land {
         } catch (IOException e) {e.printStackTrace();}
     }
 
-    public Land(WorldCoord coord, Human owner, UUID uuid, String name) {
-        this.coord = coord;
+    public Land(List<WorldCoord> coords, Human owner, UUID uuid, String name) {
+        this.coords = coords;
         this.owner = owner;
         this.realm = owner.getRealm();
         this.uuid = uuid;
@@ -51,7 +59,14 @@ public class Land {
         YamlConfiguration config = new YamlConfiguration();
         try {
             config.set("name", name);
-            config.set("coord", coord.getWorldname() + "," + coord.getX() + "," + coord.getZ());
+            //config.set("coord", coord.getWorldname() + "," + coord.getX() + "," + coord.getZ());
+
+            // multiple chunks branch (Jena-bot)
+            List<String> coordlist = new ArrayList<>();
+            for (WorldCoord coord : coords)
+                coordlist.add(coord.getWorldname() + "," + coord.getX() + "," + coord.getZ());
+            config.set("coods", coordlist);
+
             config.set("owner", owner.getUuid().toString());
             config.set("realm", "");
             config.set("uuid", uuid.toString());
@@ -66,9 +81,14 @@ public class Land {
             this.name = config.getString("name");
             this.uuid = UUID.fromString(config.getString("uuid"));
             this.data = data;
-            this.coord = new WorldCoord(config.getString("coord").split(",")[0],
-                    Integer.parseInt(config.getString("coord").split(",")[1]),
-                    Integer.parseInt(config.getString("coord").split(",")[2]));
+
+            // multiple chunks
+            List<String> coords = config.getStringList("coords");
+            for (String s : coords)
+                this.coords.add(new WorldCoord(s.split(",")[0],
+                        Integer.parseInt(s.split(",")[1]),
+                        Integer.parseInt(s.split(",")[2])));
+
             this.owner = RealmsAPI.getHuman(UUID.fromString(config.getString("uuid")));
             //todo realm
             this.realm = null;
@@ -96,12 +116,20 @@ public class Land {
         this.owner = owner;
     }
 
-    public void setCoord(WorldCoord coord) {
-        this.coord = coord;
+    public List<WorldCoord> getCoords() {
+        return coords;
     }
 
-    public WorldCoord getCoord() {
-        return coord;
+    public void setCoords(List<WorldCoord> coords) {
+        this.coords = coords;
+    }
+
+    public void addCoord(WorldCoord coord) {
+        coords.add(coord);
+    }
+
+    public void removeCoord(WorldCoord coord) {
+        coords.remove(coord);
     }
 
     public UUID getUuid() {

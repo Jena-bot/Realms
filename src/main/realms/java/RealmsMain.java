@@ -4,6 +4,7 @@ import main.realms.java.Human.Human;
 import main.realms.java.Human.HumanCommand;
 import main.realms.java.Human.HumanListener;
 import main.realms.java.Land.Land;
+import main.realms.java.objects.WorldCoord;
 import main.realms.utils.ChatInfo;
 import main.realms.utils.exceptions.RealmsException;
 import org.bukkit.Bukkit;
@@ -90,7 +91,13 @@ public class RealmsMain extends JavaPlugin {
         for (Land land : lands) {
             config.set("uuid", land.getUuid());
             config.set("owner", land.getOwner().getUuid());
-            config.set("coord", land.coord.getWorldname() + "," + land.coord.getX() + "," + land.coord.getZ());
+
+            // multiple chunks
+            List<String> coordlist = new ArrayList<>();
+            for (WorldCoord coord : land.getCoords())
+                coordlist.add(coord.getWorldname() + "," + coord.getX() + "," + coord.getZ());
+            config.set("coods", coordlist);
+
             //todo realms
         }
 

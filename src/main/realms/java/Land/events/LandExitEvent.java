@@ -8,8 +8,8 @@ import main.realms.java.objects.WorldCoord;
 public class LandExitEvent extends HumanChunkChangeEvent {
     public Land land;
 
-    public LandExitEvent(Land land, WorldCoord coord, Human human) {
-        super(land.getCoord(), coord, human);
+    public LandExitEvent(WorldCoord from, WorldCoord to, Land land, Human human) {
+        super(from, to, human);
         this.land = land;
     }
 

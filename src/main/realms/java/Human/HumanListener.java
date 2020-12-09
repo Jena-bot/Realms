@@ -74,7 +74,7 @@ public class HumanListener implements Listener {
                 HumanChunkChangeEvent chunkChangeEvent = new HumanChunkChangeEvent(new WorldCoord(event.getFrom().getWorld().getName(), event.getFrom().getChunk()),
                         new WorldCoord(event.getTo().getWorld().getName(), event.getTo().getChunk()),
                         RealmsAPI.getHuman(event.getPlayer()));
-                Bukkit.getServer().getPluginManager().callEvent(chunkChangeEvent);
+                Bukkit.getPluginManager().callEvent(chunkChangeEvent);
             } catch (RealmsException e) {
                 e.printStackTrace();
             }

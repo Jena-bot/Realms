@@ -29,6 +29,7 @@ public class HumanCommand extends BukkitCommand {
         if (args.length >= 1 && cs.hasPermission(this.getPermission())) {
 
             // /command args[0] args[1] args[2]
+            //todo add a hide function that allows people to hide their own status
             try {
                 Human human = RealmsAPI.getHuman(args[0]);
 

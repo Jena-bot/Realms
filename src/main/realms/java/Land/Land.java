@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 public class Land {
+    public String name;
     public UUID uuid;
     public WorldCoord coord;
     public Realm realm;
@@ -21,7 +22,8 @@ public class Land {
     private File data;
 
     //todo contructors
-    public Land(WorldCoord coord, Human owner) {
+    public Land(WorldCoord coord, Human owner, String name) {
+        this.name = name;
         this.coord = coord;
         this.owner = owner;
         this.realm = owner.getRealm();
@@ -30,15 +32,16 @@ public class Land {
         this.data = new File(RealmsMain.database + "/humans", uuid.toString());
         YamlConfiguration config = new YamlConfiguration();
         try {
+            config.set("name", name);
             config.set("coord", coord.getWorldname() + "," + coord.getX() + "," + coord.getZ());
             config.set("owner", owner.getUuid().toString());
-            config.set("realm", realm.getUuid());
+            config.set("realm", realm.getUuid().toString());
             config.set("uuid", uuid.toString());
             config.save(data);
         } catch (IOException e) {e.printStackTrace();}
     }
 
-    public Land(WorldCoord coord, Human owner, UUID uuid) {
+    public Land(WorldCoord coord, Human owner, UUID uuid, String name) {
         this.coord = coord;
         this.owner = owner;
         this.realm = owner.getRealm();
@@ -47,6 +50,7 @@ public class Land {
         this.data = new File(RealmsMain.database + "/lands", uuid.toString());
         YamlConfiguration config = new YamlConfiguration();
         try {
+            config.set("name", name);
             config.set("coord", coord.getWorldname() + "," + coord.getX() + "," + coord.getZ());
             config.set("owner", owner.getUuid().toString());
             config.set("realm", "");
@@ -59,6 +63,8 @@ public class Land {
         YamlConfiguration config = new YamlConfiguration();
         try {
             config.load(data);
+            this.name = config.getString("name");
+            this.uuid = UUID.fromString(config.getString("uuid"));
             this.data = data;
             this.coord = new WorldCoord(config.getString("coord").split(",")[0],
                     Integer.parseInt(config.getString("coord").split(",")[1]),

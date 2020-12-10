@@ -7,6 +7,7 @@ import main.realms.java.Land.Land;
 import main.realms.java.Land.LandCommand;
 import main.realms.java.Land.LandListener;
 import main.realms.java.Realm.Realm;
+import main.realms.java.Realm.RealmListener;
 import main.realms.utils.ChatInfo;
 import main.realms.utils.exceptions.RealmsException;
 import org.bukkit.Bukkit;
@@ -52,6 +53,7 @@ public class RealmsMain extends JavaPlugin {
         // registering listeners
         Bukkit.getPluginManager().registerEvents(new HumanListener(), this);
         Bukkit.getPluginManager().registerEvents(new LandListener(), this);
+        Bukkit.getPluginManager().registerEvents(new RealmListener(), this);
     }
 
     @Override
@@ -97,8 +99,9 @@ public class RealmsMain extends JavaPlugin {
         config = new YamlConfiguration();
         // Lands
         for (Land land : lands) {
-            config.set("uuid", land.getUuid());
-            config.set("owner", land.getOwner().getUuid());
+            config.set("name", land.getName());
+            config.set("uuid", land.getUuid().toString());
+            config.set("owner", land.getOwner().getUuid().toString());
 
             // multiple chunks
             List<String> coordlist = new ArrayList<>();
@@ -118,7 +121,7 @@ public class RealmsMain extends JavaPlugin {
         // Realms
         config = new YamlConfiguration();
         for (Realm realm : realms) {
-            config.set("uuid", realm.getUuid());
+            config.set("uuid", realm.getUuid().toString());
             config.set("name", realm.getName());
             config.set("owner", realm.getOwner().getUuid().toString());
             config.set("registered", realm.getRegistered());
@@ -131,7 +134,7 @@ public class RealmsMain extends JavaPlugin {
             config.set("lands", lands);
 
             // Vassals
-            if (realm.getVassals().toArray().length != 0) {
+            if (realm.getVassals() == null) {
                 List<String> vassals = new ArrayList<>();
                 for (Realm vassal : realm.getVassals()) vassals.add(vassal.getUuid().toString());
                 config.set("vassals", vassals);

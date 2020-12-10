@@ -25,8 +25,13 @@ public class RealmListener implements Listener {
         }
     }
 
+    /* todo move this to the listener, rather than newLand()
     @EventHandler
     public static void onNewLand(NewLandEvent event) {
-
-    }
+        if (RealmsAPI.getRealm(event.getHuman().getPlayer().getPlayer().getLocation().getChunk()) != null) {
+            RealmsAPI.getRealm(event.getHuman().getPlayer().getPlayer().getLocation().getChunk()).addLand(event.getLand());
+        } else {
+            Realm.newRealm(event.getLand(), event.getLand().getName());
+        }
+    }*/
 }

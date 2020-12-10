@@ -46,7 +46,7 @@ public class Realm {
         try {
             config.set("uuid", uuid.toString());
             config.set("name", name);
-            config.set("owner", owner.getUuid());
+            config.set("owner", owner.getUuid().toString());
             config.set("registered", registered);
             config.set("vassals", "");
             config.set("overlord", "");
@@ -87,7 +87,7 @@ public class Realm {
         try {
             config.set("uuid", uuid.toString());
             config.set("name", name);
-            config.set("owner", owner.getUuid());
+            config.set("owner", owner.getUuid().toString());
             config.set("registered", registered);
             config.set("vassals", "");
             config.set("overlord", "");
@@ -129,7 +129,7 @@ public class Realm {
         try {
             config.set("uuid", uuid.toString());
             config.set("name", name);
-            config.set("owner", owner.getUuid());
+            config.set("owner", owner.getUuid().toString());
             config.set("registered", registered);
             config.set("vassals", "");
             config.set("overlord", overlord.getUuid().toString());
@@ -169,7 +169,7 @@ public class Realm {
         try {
             config.set("uuid", uuid.toString());
             config.set("name", name);
-            config.set("owner", owner.getUuid());
+            config.set("owner", owner.getUuid().toString());
             config.set("registered", registered);
             config.set("vassals", "");
             config.set("overlord", overlord.getUuid().toString());
@@ -202,7 +202,8 @@ public class Realm {
             this.name = config.getString("name");
             this.uuid = UUID.fromString(config.getString("uuid"));
             this.registered = config.getLong("registered");
-            //todo this.overload = RealmsAPI.getRealm(UUID.fromString(config.getString("overlord")));
+            this.overlord = RealmsAPI.getRealm(UUID.fromString(config.getString("overlord")));
+            this.owner = RealmsAPI.getHuman(UUID.fromString(config.getString("owner")));
 
             // Lands
             for (String s : config.getStringList("lands")) {
@@ -344,13 +345,15 @@ public class Realm {
         }
     }
 
-    public static void newRealm(Land land, String name) {
+    public static Realm newRealm(Land land, String name) {
         Realm realm = new Realm(land.getOwner(), name, land);
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             ChatInfo.sendCenteredMessage(player, "&8&m--------------&r &5&lNEW REALM &8&m--------------");
-            ChatInfo.sendCenteredMessage(player, "&d" + land.getOwner().getName() + " has founded §5§l" + name.toUpperCase() + "§d in ");
+            ChatInfo.sendCenteredMessage(player, "&d" + land.getOwner().getName() + " has founded §5§l" + name.toUpperCase() + "§d in " + land.getName());
         }
+        RealmsMain.realms.add(realm);
+        return realm;
     }
 
 

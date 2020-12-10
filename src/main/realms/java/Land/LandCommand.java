@@ -26,7 +26,7 @@ public class LandCommand extends BukkitCommand {
     @Override
     public boolean execute(CommandSender cs, String s, String[] args) {
         if (args.length == 0) {
-
+            cs.sendMessage(prefix("&bYou need to specify a land."));
         } else {
             switch (args.length) {
                 case 1:

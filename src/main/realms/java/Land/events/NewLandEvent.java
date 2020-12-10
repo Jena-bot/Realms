@@ -21,7 +21,15 @@ public class NewLandEvent extends Event {
         return new HandlerList();
     }
 
-    public HandlerList getHanderlist() {
+    public static HandlerList getHandlerList() {
         return new HandlerList();
+    }
+
+    public Land getLand() {
+        return land;
+    }
+
+    public Human getHuman() {
+        return human;
     }
 }

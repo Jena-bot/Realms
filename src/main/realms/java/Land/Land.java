@@ -57,7 +57,6 @@ public class Land {
             config.set("created", registered);
 
             config.set("owner", owner.getUuid().toString());
-            //todo config.set("realm", realm.getUuid().toString());
             config.set("uuid", uuid.toString());
             config.save(data);
         } catch (IOException e) {e.printStackTrace();}
@@ -305,12 +304,19 @@ public class Land {
 
     public static Land newLand(Human human, String name) throws NotFoundException {
         if (human.isOnline()) {
-            Land land = new Land(human.getPlayer().getPlayer().getLocation().getChunk(), human, name);
+            Chunk chunk = human.getPlayer().getPlayer().getLocation().getChunk();
+            Land land = new Land(chunk, human, name);
             NewLandEvent event = new NewLandEvent(land, human);
             Bukkit.getPluginManager().callEvent(event);
             for (Player player : Bukkit.getOnlinePlayers()) {
                 ChatInfo.sendCenteredMessage(player, "&8&m--------------&r &3&lNEW LAND &8&m--------------");
                 ChatInfo.sendCenteredMessage(player, "&b" + human.getName() + " has founded the land of &l" + land.getName().toUpperCase());
+            }
+            //todo move this to RealmListener
+            if (RealmsAPI.getRealm(chunk) == null) {
+                Realm.newRealm(land, land.getName());
+            } else {
+                RealmsAPI.getRealm(chunk).addLand(land);
             }
             RealmsMain.lands.add(land);
             return land;

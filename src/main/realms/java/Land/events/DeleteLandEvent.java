@@ -20,7 +20,15 @@ public class DeleteLandEvent extends Event {
         return new HandlerList();
     }
 
-    public HandlerList getHanderlist() {
+    public static HandlerList getHandlerList() {
         return new HandlerList();
+    }
+
+    public Human getHuman() {
+        return human;
+    }
+
+    public String getLand() {
+        return land;
     }
 }

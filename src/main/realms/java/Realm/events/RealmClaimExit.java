@@ -29,7 +29,23 @@ public class RealmClaimExit extends Event {
         return new HandlerList();
     }
 
-    public static HandlerList getHanderList() {
+    public static HandlerList getHandlerList() {
         return new HandlerList();
+    }
+
+    public Chunk getFrom() {
+        return from;
+    }
+
+    public Chunk getTo() {
+        return to;
+    }
+
+    public Realm getRealm() {
+        return realm;
+    }
+
+    public Human getHuman() {
+        return human;
     }
 }

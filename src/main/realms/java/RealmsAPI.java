@@ -18,9 +18,7 @@ public class RealmsAPI {
 
     @Nullable
     private static Human getExactHuman(String uuid) throws NotFoundException {
-        for (Human human : RealmsMain.humans) {
-            if (human.getUuid().toString().equalsIgnoreCase(uuid)) return human;
-        }
+        for (Human human : RealmsMain.humans) if (human.getUuid().toString().equalsIgnoreCase(uuid)) return human;
         throw new NotFoundException();
     }
 
@@ -67,14 +65,32 @@ public class RealmsAPI {
     }
 
     @Nullable
+    public static Realm getRealmOwner(Human human) throws NotFoundException {
+        for (Realm realm : RealmsMain.realms) if (realm.getOwner().getUuid().toString().equalsIgnoreCase(human.getUuid().toString())) return realm;
+        throw new NotFoundException();
+    }
+
+    @Nullable
     public static Realm getRealm(UUID uuid) throws NotFoundException {
-        for (Realm realm : Realms.getRealms()) if (realm.getUuid() == uuid) return realm;
+        for (Realm realm : RealmsMain.realms) if (realm.getUuid().toString().equalsIgnoreCase(uuid.toString())) return realm;
         throw new NotFoundException();
     }
 
     @Nullable
     public static Realm getRealm(String name) throws NotFoundException {
-        for (Realm realm : Realms.getRealms()) if (realm.getName().equals(name)) return realm;
+        for (Realm realm : RealmsMain.realms) if (realm.getName().equalsIgnoreCase(name)) return realm;
         throw new NotFoundException();
+    }
+
+    @Nullable
+    public static Realm getRealm(Human human) throws NotFoundException {
+        for (Realm realm : RealmsMain.realms) for (Land land : realm.lands) if (land.getOwner() == human) return realm;
+        return null;
+    }
+
+    @Nullable
+    public static Realm getRealm(Chunk chunk) {
+        for (Realm realm : RealmsMain.realms) if (realm.getClaims().contains(chunk)) return realm;
+        return null;
     }
 }

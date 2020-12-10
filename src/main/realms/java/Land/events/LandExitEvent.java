@@ -20,7 +20,7 @@ public class LandExitEvent extends Event {
         this.to = to;
         this.land = land;
         this.human = human;
-        human.getPlayer().getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§2Wilderness"));
+        human.getPlayer().getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§2Wilderness claimed by §6§l" + land.getRealm().getName().toUpperCase()));
         Bukkit.broadcastMessage("e");
     }
 

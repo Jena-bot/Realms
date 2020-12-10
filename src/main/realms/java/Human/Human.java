@@ -1,7 +1,8 @@
 package main.realms.java.Human;
-
 import main.realms.java.Realm.Realm;
+import main.realms.java.RealmsAPI;
 import main.realms.java.RealmsMain;
+import main.realms.utils.exceptions.NotFoundException;
 import main.realms.utils.exceptions.RealmsException;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -18,7 +19,6 @@ public class Human {
     public String name;
     public UUID uuid;
     public String title;
-    public Realm realm = null;
     private long played;
     private long online;
     private final File data;
@@ -39,6 +39,7 @@ public class Human {
                 config.set("name", this.name);
                 config.set("uuid", this.uuid.toString());
                 config.set("title", "");
+                config.set("realm", "");
                 config.set("played", System.currentTimeMillis());
                 config.set("online", System.currentTimeMillis());
                 config.save(data);
@@ -77,7 +78,9 @@ public class Human {
             // title, separate due to "" being equal to null when in YAML configuration.
             if (config.getString("title") == null) {
                 this.title = "";
-            } else {this.title = config.getString("title");}
+            } else {
+                this.title = config.getString("title");
+            }
 
             this.played = config.getLong("played");
             this.online = config.getLong("online");
@@ -98,7 +101,7 @@ public class Human {
         this.uuid = uuid;
 
         // to update RealmsAPI
-        RealmsMain.humans.removeIf(human -> human.getName() == getName());
+        RealmsMain.humans.removeIf(human -> human.getName().equals(getName()));
         RealmsMain.humans.add(this);
     }
 
@@ -124,18 +127,6 @@ public class Human {
 
     public File getData() {
         return data;
-    }
-
-    public Realm getRealm() {
-        return realm;
-    }
-
-    public void setRealm(Realm realm) {
-        this.realm = realm;
-
-        // to update RealmsAPI
-        RealmsMain.humans.removeIf(human -> human.getUuid() == getUuid());
-        RealmsMain.humans.add(this);
     }
 
     protected void setOnline(long online) {
@@ -171,5 +162,20 @@ public class Human {
             if (player.getUniqueId() == player.getUniqueId()) return true;
         }
         return false;
+    }
+
+    public boolean hasRealm() {
+        try {
+            return RealmsAPI.getRealm(this) != null;
+        } catch (NotFoundException e) {
+            return false;
+        }
+    }
+
+    public Realm getRealm() throws NotFoundException {
+        if (hasRealm()) {
+            return RealmsAPI.getRealm(this);
+        }
+        else return null;
     }
 }

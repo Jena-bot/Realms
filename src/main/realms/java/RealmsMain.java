@@ -6,6 +6,7 @@ import main.realms.java.Human.HumanListener;
 import main.realms.java.Land.Land;
 import main.realms.java.Land.LandCommand;
 import main.realms.java.Land.LandListener;
+import main.realms.java.Realm.Realm;
 import main.realms.utils.ChatInfo;
 import main.realms.utils.exceptions.RealmsException;
 import org.bukkit.Bukkit;
@@ -25,6 +26,7 @@ public class RealmsMain extends JavaPlugin {
     // caching, files are saved using runnable, till then stored in memory.
     public static List<Human> humans = new ArrayList<>();
     public static List<Land> lands = new ArrayList<>();
+    public static List<Realm> realms = new ArrayList<>();
     private static final Runnable save = RealmsMain::saveData;
 
     @Override
@@ -103,8 +105,44 @@ public class RealmsMain extends JavaPlugin {
             for (Chunk chunk : land.getChunks())
                 coordlist.add(chunk.getWorld().getName() + "," + chunk.getX() + "," + chunk.getZ());
             config.set("coords", coordlist);
+            config.set("registered", land.getRegistered());
 
-            //todo realms
+            try {
+                config.save(land.getData());
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        // Realms
+        config = new YamlConfiguration();
+        for (Realm realm : realms) {
+            config.set("uuid", realm.getUuid());
+            config.set("name", realm.getName());
+            config.set("owner", realm.getOwner().getUuid().toString());
+            config.set("registered", realm.getRegistered());
+            if (realm.getOverlord() == null) config.set("overlord", "");
+            else config.set("overlord", realm.getOverlord().getUuid().toString());
+
+            // Lands
+            List<String> lands = new ArrayList<>();
+            for (Land land : realm.getLands()) lands.add(land.getUuid().toString());
+            config.set("lands", lands);
+
+            // Vassals
+            if (realm.getVassals().toArray().length != 0) {
+                List<String> vassals = new ArrayList<>();
+                for (Realm vassal : realm.getVassals()) vassals.add(vassal.getUuid().toString());
+                config.set("vassals", vassals);
+            } else config.set("vassals", "");
+
+            try {
+                config.save(realm.getData());
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
         }
 
         return true;
@@ -135,6 +173,21 @@ public class RealmsMain extends JavaPlugin {
                     lands.add(new Land(file));
                 } catch (RealmsException e) {
                     e.printStackTrace();
+                    return false;
+                }
+            }
+        }
+
+        realms = new ArrayList<>();
+        // Realms
+        File realmsDATA = new File("plugins/Realms/data/realms");
+        if (realmsDATA.listFiles() != null) {
+            for (File file : realmsDATA.listFiles()) {
+                try {
+                    realms.add(new Realm(file));
+                } catch (RealmsException e) {
+                    e.printStackTrace();
+                    return false;
                 }
             }
         }

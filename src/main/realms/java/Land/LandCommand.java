@@ -47,7 +47,7 @@ public class LandCommand extends BukkitCommand {
                                 sendCenteredMessage(cs, "&bSize &3[" + land.getChunks().toArray().length + "]");
                                 sendCenteredMessage(cs, "&8&m-----------------");
                                 sendCenteredMessage(cs, "&bOwned by");
-                                if (cs.getName() != land.getOwner().getName()) sendCenteredMessage(cs, "&3&l" + land.getOwner().getName().toUpperCase());
+                                if (!cs.getName().equals(land.getOwner().getName())) sendCenteredMessage(cs, "&3&l" + land.getOwner().getName().toUpperCase());
                                 else sendCenteredMessage(cs, "&3&lYOU");
                                 sendCenteredMessage(cs, "&8&m-----------------");
                                 sendCenteredMessage(cs, "&3Founded on " + registeredFormat.format(land.getRegistered()));

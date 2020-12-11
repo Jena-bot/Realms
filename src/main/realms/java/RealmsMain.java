@@ -5,13 +5,14 @@ import main.realms.java.Human.HumanCommand;
 import main.realms.java.Human.HumanListener;
 import main.realms.java.Land.Land;
 import main.realms.java.Land.LandCommand;
-import main.realms.java.Land.LandListener;
 import main.realms.java.Realm.Realm;
-import main.realms.java.Realm.RealmListener;
+import main.realms.java.listeners.MovementListener;
 import main.realms.utils.ChatInfo;
+import main.realms.utils.exceptions.NotFoundException;
 import main.realms.utils.exceptions.RealmsException;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_16_R2.CraftServer;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class RealmsMain extends JavaPlugin {
     public static String database = "plugins/Realms/data";
@@ -52,8 +54,7 @@ public class RealmsMain extends JavaPlugin {
 
         // registering listeners
         Bukkit.getPluginManager().registerEvents(new HumanListener(), this);
-        Bukkit.getPluginManager().registerEvents(new LandListener(), this);
-        Bukkit.getPluginManager().registerEvents(new RealmListener(), this);
+        Bukkit.getPluginManager().registerEvents(new MovementListener(), this);
     }
 
     @Override
@@ -110,6 +111,10 @@ public class RealmsMain extends JavaPlugin {
             config.set("coords", coordlist);
             config.set("registered", land.getRegistered());
 
+
+
+            config.set("realm", land.getRealm().getUuid().toString());
+
             try {
                 config.save(land.getData());
             } catch (IOException e) {
@@ -125,8 +130,8 @@ public class RealmsMain extends JavaPlugin {
             config.set("name", realm.getName());
             config.set("owner", realm.getOwner().getUuid().toString());
             config.set("registered", realm.getRegistered());
-            if (realm.getOverlord() == null) config.set("overlord", "");
-            else config.set("overlord", realm.getOverlord().getUuid().toString());
+            if (realm.getOverlord() != null) config.set("overlord", realm.getOverlord().getUuid().toString());
+            else config.set("overlord", "");
 
             // Lands
             List<String> lands = new ArrayList<>();
@@ -134,7 +139,7 @@ public class RealmsMain extends JavaPlugin {
             config.set("lands", lands);
 
             // Vassals
-            if (realm.getVassals() == null) {
+            if (realm.getVassals() != null) {
                 List<String> vassals = new ArrayList<>();
                 for (Realm vassal : realm.getVassals()) vassals.add(vassal.getUuid().toString());
                 config.set("vassals", vassals);
@@ -173,7 +178,8 @@ public class RealmsMain extends JavaPlugin {
         if (landsDATA.listFiles() != null) {
             for (File file : landsDATA.listFiles()) {
                 try {
-                    lands.add(new Land(file));
+                    Land land = new Land(file);
+                    lands.add(land);
                 } catch (RealmsException e) {
                     e.printStackTrace();
                     return false;
@@ -192,6 +198,18 @@ public class RealmsMain extends JavaPlugin {
                     e.printStackTrace();
                     return false;
                 }
+            }
+        }
+
+        // Lands setting realms
+        for (Land land : lands) {
+            YamlConfiguration config = new YamlConfiguration();
+            try {
+                config.load(land.getData());
+                land.setRealm(RealmsAPI.getRealm(UUID.fromString(config.getString("realm"))));
+            } catch (IOException | InvalidConfigurationException | NotFoundException e) {
+                e.printStackTrace();
+                return false;
             }
         }
 

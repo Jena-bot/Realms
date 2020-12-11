@@ -202,12 +202,14 @@ public class Realm {
             this.name = config.getString("name");
             this.uuid = UUID.fromString(config.getString("uuid"));
             this.registered = config.getLong("registered");
-            this.overlord = RealmsAPI.getRealm(UUID.fromString(config.getString("overlord")));
+            if (config.getString("overlord") != null && config.getString("overlord") != "" && config.getString("overlord") != "''") {
+                this.overlord = RealmsAPI.getRealm(UUID.fromString(config.getString("overlord")));
+            } else this.overlord = null;
             this.owner = RealmsAPI.getHuman(UUID.fromString(config.getString("owner")));
 
             // Lands
             for (String s : config.getStringList("lands")) {
-                this.lands.add(RealmsAPI.getLand(UUID.fromString(s)));
+                this.lands.add(RealmsAPI.getExactLand(s));
             }
 
             // vassals
@@ -248,6 +250,7 @@ public class Realm {
 
     public void addLand(Land land) {
         lands.add(land);
+        Realm.UpdateClaims(this);
 
         RealmsMain.realms.removeIf(realm -> realm.getUuid() == getUuid());
         RealmsMain.realms.add(this);
@@ -292,6 +295,7 @@ public class Realm {
 
     public void setLands(List<Land> lands) {
         this.lands = lands;
+        Realm.UpdateClaims(this);
 
         RealmsMain.realms.removeIf(realm -> realm.getUuid() == getUuid());
         RealmsMain.realms.add(this);
@@ -347,6 +351,7 @@ public class Realm {
 
     public static Realm newRealm(Land land, String name) {
         Realm realm = new Realm(land.getOwner(), name, land);
+        land.setRealmData(realm);
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             ChatInfo.sendCenteredMessage(player, "&8&m--------------&r &5&lNEW REALM &8&m--------------");

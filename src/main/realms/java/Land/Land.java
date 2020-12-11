@@ -54,10 +54,11 @@ public class Land {
             for (Chunk chunk : chunks)
                 coordlist.add(chunk.getWorld().getName() + "," + chunk.getX() + "," + chunk.getZ());
             config.set("coords", coordlist);
-            config.set("created", registered);
+            config.set("registered", registered);
 
             config.set("owner", owner.getUuid().toString());
             config.set("uuid", uuid.toString());
+            config.set("realm", "");
             config.save(data);
         } catch (IOException e) {e.printStackTrace();}
     }
@@ -87,7 +88,7 @@ public class Land {
             List<String> coordlist = new ArrayList<>();
             coordlist.add(chunk.getWorld().getName() + "," + chunk.getX() + "," + chunk.getZ());
             config.set("coords", coordlist);
-            config.set("created", registered);
+            config.set("registered", registered);
 
             config.set("owner", owner.getUuid().toString());
             //todo config.set("realm", realm.getUuid().toString());
@@ -122,7 +123,7 @@ public class Land {
             List<String> coordlist = new ArrayList<>();
             coordlist.add(chunk.getWorld().getName() + "," + chunk.getX() + "," + chunk.getZ());
             config.set("coords", coordlist);
-            config.set("created", registered);
+            config.set("registered", registered);
 
             config.set("owner", owner.getUuid().toString());
             //todo config.set("realm", realm.getUuid().toString());
@@ -149,7 +150,7 @@ public class Land {
             for (Chunk chunk : chunks)
                 coordlist.add(chunk.getWorld().getName() + "," + chunk.getX() + "," + chunk.getZ());
             config.set("coords", coordlist);
-            config.set("created", registered);
+            config.set("registered", registered);
 
             config.set("owner", owner.getUuid().toString());
             config.set("realm", "");
@@ -165,7 +166,7 @@ public class Land {
             this.name = config.getString("name");
             this.uuid = UUID.fromString(config.getString("uuid"));
             this.data = data;
-            this.registered = config.getLong("created");
+            this.registered = config.getLong("registered");
 
             // multiple chunks
             List<String> coords = config.getStringList("coords");
@@ -173,9 +174,7 @@ public class Land {
                 this.chunks.add(Bukkit.getWorld(s.split(",")[0]).getChunkAt(Integer.parseInt(s.split(",")[1]), Integer.parseInt(s.split(",")[2])));
 
             this.owner = RealmsAPI.getHuman(UUID.fromString(config.getString("owner")));
-            //todo realm
-            this.realm = null;
-
+            //notice Realm setting is in loadData() rather than here, due to the load order.
         } catch (InvalidConfigurationException | IOException | RealmsException e) {
             throw new RealmsException("201");
         }
@@ -198,10 +197,28 @@ public class Land {
     }
 
     public void setRealm(Realm realm) {
-        this.realm.lands.removeIf(land -> land.getUuid() == this.getUuid());
+        if (this.realm != null) this.realm.lands.removeIf(land -> land.getUuid() == this.getUuid());
         this.realm = realm;
         realm.getLands().removeIf(land -> land.getUuid() == this.getUuid());
         realm.addLand(this);
+
+        RealmsMain.lands.removeIf(land -> land.getUuid() == getUuid());
+        RealmsMain.lands.add(this);
+    }
+
+    public void setRealmData(Realm realm) {
+        if (this.realm != null) this.realm.lands.removeIf(land -> land.getUuid() == this.getUuid());
+        this.realm = realm;
+        realm.getLands().removeIf(land -> land.getUuid() == this.getUuid());
+        realm.addLand(this);
+
+        YamlConfiguration config = new YamlConfiguration();
+        try {
+            config.load(getData());
+            config.set("realm", realm.getUuid());
+        } catch (IOException | InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
 
         RealmsMain.lands.removeIf(land -> land.getUuid() == getUuid());
         RealmsMain.lands.add(this);
@@ -311,6 +328,7 @@ public class Land {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 ChatInfo.sendCenteredMessage(player, "&8&m--------------&r &3&lNEW LAND &8&m--------------");
                 ChatInfo.sendCenteredMessage(player, "&b" + human.getName() + " has founded the land of &l" + land.getName().toUpperCase());
+                ChatInfo.sendCenteredMessage(player, "");
             }
             //todo move this to RealmListener
             if (RealmsAPI.getRealm(chunk) == null) {

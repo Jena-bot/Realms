@@ -22,7 +22,7 @@ public class RealmClaimEnter extends Event {
         this.realm = realm;
         this.human = human;
         Bukkit.broadcastMessage("ee");
-        human.getPlayer().getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§eEntering §6§l" + RealmsAPI.getRealm(to).getName().toUpperCase()));
+        human.getPlayer().getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§a§lWILDERNESS§e claimed by §6§l" + RealmsAPI.getRealm(to).getName().toUpperCase()));
     }
 
     @Override

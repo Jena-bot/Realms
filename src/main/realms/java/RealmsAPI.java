@@ -46,7 +46,12 @@ public class RealmsAPI {
 
     @Nullable
     public static Land getLand(UUID uuid) throws NotFoundException {
-        for (Land land : RealmsMain.lands) if (land.uuid == uuid) return land;
+        return getExactLand(uuid.toString());
+    }
+
+    @Nullable
+    public static Land getExactLand(String uuid) throws NotFoundException {
+        for (Land land : RealmsMain.lands) if (land.getUuid().toString().equalsIgnoreCase(uuid)) return land;
         throw new NotFoundException();
     }
 

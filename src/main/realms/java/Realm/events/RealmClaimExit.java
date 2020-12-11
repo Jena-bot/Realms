@@ -21,7 +21,7 @@ public class RealmClaimExit extends Event {
         this.realm = realm;
         this.human = human;
         Bukkit.broadcastMessage("ee");
-        human.getPlayer().getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§2Unclaimed Wilderness"));
+        human.getPlayer().getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§a§lWILDERNESS"));
     }
 
     @Override

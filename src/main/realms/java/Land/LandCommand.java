@@ -43,9 +43,9 @@ public class LandCommand extends BukkitCommand {
 
                                 //todo move formatting to Formatter.java
                                 sendCenteredMessage(cs, "&8&m-----------------&r &b&l" + land.getName().toUpperCase() + " &8&m-----------------&r");
-                                //todo sendCenteredMessage(cs, "&5&l" + land.getRealm().getName());
+                                sendCenteredMessage(cs, "§dOwned by the Realm of &5&l" + land.getRealm().getName().toUpperCase());
                                 sendCenteredMessage(cs, "&bSize &3[" + land.getChunks().toArray().length + "]");
-                                sendCenteredMessage(cs, "&8&m-----------------");
+                                sendCenteredMessage(cs, "&8&m--------------");
                                 sendCenteredMessage(cs, "&bOwned by");
                                 if (!cs.getName().equals(land.getOwner().getName())) sendCenteredMessage(cs, "&3&l" + land.getOwner().getName().toUpperCase());
                                 else sendCenteredMessage(cs, "&3&lYOU");

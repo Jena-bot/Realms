@@ -11,7 +11,7 @@ import org.bukkit.event.Listener;
 
 public class RealmListener implements Listener {
 
-    @EventHandler
+    /*@EventHandler
     public static void onChunk(HumanChunkChangeEvent event) {
         if (RealmsAPI.getLand(event.getTo()) == null && RealmsAPI.getLand(event.getFrom()) == null) {
             // leaving a claim
@@ -23,7 +23,7 @@ public class RealmListener implements Listener {
                 Bukkit.getPluginManager().callEvent(new RealmClaimEnter(event.getTo(), event.getFrom(), RealmsAPI.getRealm(event.getTo()), event.getHuman()));
             }
         }
-    }
+    }*/
 
     /* todo move this to the listener, rather than newLand()
     @EventHandler

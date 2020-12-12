@@ -70,7 +70,7 @@ public class RealmsAPI {
     }
 
     @Nullable
-    public static Realm getRealmOwner(Human human) throws NotFoundException {
+    public static Realm getRealmOwner(Human human) throws RealmsException {
         for (Realm realm : RealmsMain.realms) if (realm.getOwner().getUuid().toString().equalsIgnoreCase(human.getUuid().toString())) return realm;
         throw new NotFoundException();
     }

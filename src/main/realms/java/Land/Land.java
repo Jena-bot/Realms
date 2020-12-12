@@ -11,6 +11,7 @@ import main.realms.utils.exceptions.NotFoundException;
 import main.realms.utils.exceptions.RealmsException;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Warning;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -26,8 +27,7 @@ public class Land {
     public String name;
     public UUID uuid;
     public List<Chunk> chunks = new ArrayList<>();
-    public Realm realm;
-    public Human owner;
+    public UUID owner;
     private final File data;
     private final long registered;
 
@@ -35,12 +35,7 @@ public class Land {
     public Land(List<Chunk> chunks, Human owner, String name) {
         this.name = name;
         this.chunks = chunks;
-        this.owner = owner;
-        try {
-            this.realm = RealmsAPI.getRealm(owner);
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        }
+        this.owner = owner.getUuid();
         this.uuid = UUID.randomUUID();
         this.registered = System.currentTimeMillis();
 
@@ -58,7 +53,6 @@ public class Land {
 
             config.set("owner", owner.getUuid().toString());
             config.set("uuid", uuid.toString());
-            config.set("realm", "");
             config.save(data);
         } catch (IOException e) {e.printStackTrace();}
     }
@@ -70,12 +64,7 @@ public class Land {
         this.chunks = new ArrayList<>();
         chunks.add(chunk);
 
-        this.owner = owner;
-        try {
-            this.realm = RealmsAPI.getRealm(owner);
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        }
+        this.owner = owner.getUuid();
         this.uuid = UUID.randomUUID();
         this.registered = System.currentTimeMillis();
 
@@ -91,7 +80,6 @@ public class Land {
             config.set("registered", registered);
 
             config.set("owner", owner.getUuid().toString());
-            //todo config.set("realm", realm.getUuid().toString());
             config.set("uuid", uuid.toString());
             config.save(data);
         } catch (IOException e) {e.printStackTrace();}
@@ -104,12 +92,7 @@ public class Land {
         this.chunks = new ArrayList<>();
         chunks.add(chunk);
 
-        this.owner = owner;
-        try {
-            this.realm = RealmsAPI.getRealm(owner);
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        }
+        this.owner = owner.getUuid();
         this.uuid = uuid;
         this.registered = System.currentTimeMillis();
 
@@ -126,7 +109,6 @@ public class Land {
             config.set("registered", registered);
 
             config.set("owner", owner.getUuid().toString());
-            //todo config.set("realm", realm.getUuid().toString());
             config.set("uuid", uuid.toString());
             config.save(data);
         } catch (IOException e) {e.printStackTrace();}
@@ -134,8 +116,7 @@ public class Land {
 
     public Land(List<Chunk> chunks, Human owner, UUID uuid, String name) throws NotFoundException {
         this.chunks = chunks;
-        this.owner = owner;
-        this.realm = RealmsAPI.getRealm(owner);
+        this.owner = owner.getUuid();
         this.uuid = uuid;
         this.registered = System.currentTimeMillis();
 
@@ -153,7 +134,6 @@ public class Land {
             config.set("registered", registered);
 
             config.set("owner", owner.getUuid().toString());
-            config.set("realm", "");
             config.set("uuid", uuid.toString());
             config.save(data);
         } catch (IOException e) {e.printStackTrace();}
@@ -173,9 +153,9 @@ public class Land {
             for (String s : coords)
                 this.chunks.add(Bukkit.getWorld(s.split(",")[0]).getChunkAt(Integer.parseInt(s.split(",")[1]), Integer.parseInt(s.split(",")[2])));
 
-            this.owner = RealmsAPI.getHuman(UUID.fromString(config.getString("owner")));
+            this.owner = UUID.fromString(config.getString("owner"));
             //notice Realm setting is in loadData() rather than here, due to the load order.
-        } catch (InvalidConfigurationException | IOException | RealmsException e) {
+        } catch (InvalidConfigurationException | IOException e) {
             throw new RealmsException("201");
         }
     }
@@ -185,8 +165,6 @@ public class Land {
 
     public void setName(String name) {
         this.name = name;
-        realm.getLands().removeIf(land -> land.getUuid() == this.getUuid());
-        realm.addLand(this);
 
         RealmsMain.lands.removeIf(land -> land.getUuid() == getUuid());
         RealmsMain.lands.add(this);
@@ -196,54 +174,20 @@ public class Land {
         return name;
     }
 
-    public void setRealm(Realm realm) {
-        if (this.realm != null) this.realm.lands.removeIf(land -> land.getUuid() == this.getUuid());
-        this.realm = realm;
-        realm.getLands().removeIf(land -> land.getUuid() == this.getUuid());
-        realm.addLand(this);
-
-        RealmsMain.lands.removeIf(land -> land.getUuid() == getUuid());
-        RealmsMain.lands.add(this);
+    public Realm getRealm() throws RealmsException {
+        return RealmsAPI.getRealm(RealmsAPI.getHuman(owner));
     }
 
-    public void setRealmData(Realm realm) {
-        if (this.realm != null) this.realm.lands.removeIf(land -> land.getUuid() == this.getUuid());
-        this.realm = realm;
-        realm.getLands().removeIf(land -> land.getUuid() == this.getUuid());
-        realm.addLand(this);
-
-        YamlConfiguration config = new YamlConfiguration();
-        try {
-            config.load(getData());
-            config.set("realm", realm.getUuid());
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
-        }
-
-        RealmsMain.lands.removeIf(land -> land.getUuid() == getUuid());
-        RealmsMain.lands.add(this);
+    public Human getOwner() throws RealmsException {
+        return RealmsAPI.getHuman(owner);
     }
 
-    public Realm getRealm() {
-        return realm;
-    }
-
-    public Human getOwner() {
+    public UUID getOwnerUUID() {
         return owner;
     }
 
     public void setOwner(Human owner) {
-        this.owner = owner;
-
-        // realms
-        realm.getLands().removeIf(land -> land.getUuid() == this.getUuid());
-        try {
-            this.realm = RealmsAPI.getRealm(owner);
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        }
-        realm.getLands().removeIf(land -> land.getUuid() == this.getUuid());
-        realm.addLand(this);
+        this.owner = owner.getUuid();
 
         RealmsMain.lands.removeIf(land -> land.getUuid() == getUuid());
         RealmsMain.lands.add(this);
@@ -255,8 +199,6 @@ public class Land {
 
     public void setChunks(List<Chunk> chunks) {
         this.chunks = chunks;
-        realm.getLands().removeIf(land -> land.getUuid() == this.getUuid());
-        realm.addLand(this);
 
         RealmsMain.lands.removeIf(land -> land.getUuid() == getUuid());
         RealmsMain.lands.add(this);
@@ -264,8 +206,6 @@ public class Land {
 
     public void addChunk(Chunk chunk) {
         chunks.add(chunk);
-        realm.getLands().removeIf(land -> land.getUuid() == this.getUuid());
-        realm.addLand(this);
 
         RealmsMain.lands.removeIf(land -> land.getUuid() == getUuid());
         RealmsMain.lands.add(this);
@@ -273,8 +213,6 @@ public class Land {
 
     public void removeChunk(Chunk chunk) {
         chunks.remove(chunk);
-        realm.getLands().removeIf(land -> land.getUuid() == this.getUuid());
-        realm.addLand(this);
 
         RealmsMain.lands.removeIf(land -> land.getUuid() == getUuid());
         RealmsMain.lands.add(this);
@@ -284,10 +222,9 @@ public class Land {
         return uuid;
     }
 
+    @Warning
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
-        realm.getLands().removeIf(land -> land.getUuid() == this.getUuid());
-        realm.addLand(this);
 
         RealmsMain.lands.removeIf(land -> land.getName().equals(getName()));
         RealmsMain.lands.add(this);
@@ -308,13 +245,29 @@ public class Land {
         data.delete();
 
         RealmsMain.lands.removeIf(land -> land.getUuid() == getUuid());
-        this.getRealm().lands.removeIf(land -> land.getUuid() == getUuid());
+        try {
+            this.getRealm().lands.removeIf(land -> {
+                try {
+                    return RealmsAPI.getLand(land).getUuid() == getUuid();
+                } catch (NotFoundException e) {
+                    e.printStackTrace();
+                }
+                return false;
+            });
+        } catch (RealmsException e) {
+            e.printStackTrace();
+        }
 
-        Bukkit.getPluginManager().callEvent(new DeleteLandEvent(this.getName(), this.getOwner()));
+        Bukkit.getPluginManager().callEvent(new DeleteLandEvent(this.getName()));
     }
 
     public boolean hasRealm() {
-        return this.getRealm() != null;
+        try {
+            getRealm();
+            return true;
+        } catch (RealmsException e) {
+            return false;
+        }
     }
 
     // static stuff

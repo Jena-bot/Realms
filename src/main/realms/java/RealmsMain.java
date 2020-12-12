@@ -6,6 +6,7 @@ import main.realms.java.Human.HumanListener;
 import main.realms.java.Land.Land;
 import main.realms.java.Land.LandCommand;
 import main.realms.java.Realm.Realm;
+import main.realms.java.Realm.RealmCommand;
 import main.realms.java.listeners.MovementListener;
 import main.realms.utils.ChatInfo;
 import main.realms.utils.exceptions.NotFoundException;
@@ -75,7 +76,11 @@ public class RealmsMain extends JavaPlugin {
         // land command
         List<String> landalias = new ArrayList<>();
         landalias.add("l");
-        ((CraftServer) this.getServer()).getCommandMap().register("land", new LandCommand("land", statalias, "realms.command.land"));
+        ((CraftServer) this.getServer()).getCommandMap().register("land", new LandCommand("land", landalias, "realms.command.land"));
+
+        // land command
+        List<String> realmalias = new ArrayList<>();
+        ((CraftServer) this.getServer()).getCommandMap().register("realm", new RealmCommand("realm", realmalias, "realms.command.realm"));
     }
 
     public static boolean saveData() {
@@ -128,7 +133,12 @@ public class RealmsMain extends JavaPlugin {
         for (Realm realm : realms) {
             config.set("uuid", realm.getUuid().toString());
             config.set("name", realm.getName());
-            config.set("owner", realm.getOwner().getUuid().toString());
+            try {
+                config.set("owner", realm.getOwner().getUuid().toString());
+            } catch (RealmsException e) {
+                e.printStackTrace();
+                return false;
+            }
             config.set("registered", realm.getRegistered());
             if (realm.getOverlord() != null) config.set("overlord", realm.getOverlord().getUuid().toString());
             else config.set("overlord", "");

@@ -17,7 +17,10 @@ public class HumanListener implements Listener {
     public static void onJoin(PlayerJoinEvent event) {
         // todo add something to counter name changes
         try {
-            RealmsAPI.getHuman(event.getPlayer());
+            Human human = RealmsAPI.getHuman(event.getPlayer());
+
+            if (human.getName() != event.getPlayer().getName())
+                human.setName(event.getPlayer().getName());
         } catch (RealmsException e) {
             try {
                 RealmsMain.humans.add(new Human(event.getPlayer(), true));

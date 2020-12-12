@@ -1,7 +1,6 @@
 package main.realms.java.Land;
 
 import main.realms.java.RealmsAPI;
-import main.realms.utils.exceptions.NotFoundException;
 import main.realms.utils.exceptions.RealmsException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
@@ -9,7 +8,8 @@ import org.bukkit.command.defaults.BukkitCommand;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import static main.realms.utils.ChatInfo.*;
+import static main.realms.utils.ChatInfo.prefix;
+import static main.realms.utils.ChatInfo.sendCenteredMessage;
 
 public class LandCommand extends BukkitCommand {
     public static final SimpleDateFormat registeredFormat = new SimpleDateFormat("MMMMM d yyyy");
@@ -51,7 +51,7 @@ public class LandCommand extends BukkitCommand {
                                 else sendCenteredMessage(cs, "&3&lYOU");
                                 sendCenteredMessage(cs, "&8&m-----------------");
                                 sendCenteredMessage(cs, "&3Founded on " + registeredFormat.format(land.getRegistered()));
-                            } catch (NotFoundException e) {
+                            } catch (RealmsException e) {
                                 cs.sendMessage(prefix("&c" + args[0] + " is not a valid land."));
                             }
                             break;

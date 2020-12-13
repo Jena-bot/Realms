@@ -1,9 +1,9 @@
 package main.realms.java.Human;
 
+import main.realms.java.Land.Land;
 import main.realms.java.Realm.Realm;
 import main.realms.java.RealmsAPI;
 import main.realms.java.RealmsMain;
-import main.realms.utils.exceptions.NotFoundException;
 import main.realms.utils.exceptions.RealmsException;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
@@ -199,19 +200,18 @@ public class Human {
     }
 
     public boolean hasRealm() {
-        try {
-            getRealm();
-            return true;
-        } catch (NotFoundException e) {
-            return false;
-        }
+        return getRealm() != null;
     }
 
-    public Realm getRealm() throws NotFoundException {
+    public Realm getRealm() {
         if (hasRealm()) {
             return RealmsAPI.getRealm(this);
         }
         else return null;
+    }
+
+    public List<Land> getLands() {
+        return RealmsAPI.getOwnedLand(this);
     }
 
     /* static methods */

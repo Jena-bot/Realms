@@ -2,7 +2,6 @@ package main.realms.java.Human;
 
 import main.realms.java.RealmsAPI;
 import main.realms.utils.ChatInfo;
-import main.realms.utils.exceptions.RealmsException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 
@@ -30,7 +29,7 @@ public class HumanCommand extends BukkitCommand {
 
             // /command args[0] args[1] args[2]
             //todo add a hide function that allows people to hide their own status
-            try {
+            if (RealmsAPI.getHuman(args[0]) != null) {
                 Human human = RealmsAPI.getHuman(args[0]);
 
                 //todo move formatting to Formatter.java
@@ -40,11 +39,9 @@ public class HumanCommand extends BukkitCommand {
                 ChatInfo.sendCenteredMessage(cs, "&eJoined on " + registeredFormat.format(human.getPlayed()));
                 if (human.isOnline()) ChatInfo.sendCenteredMessage(cs, "&aCurrently Online!");
                 else ChatInfo.sendCenteredMessage(cs, "&eLast Online on " + lastOnlineFormat.format(System.currentTimeMillis()));
-            } catch (RealmsException e) {
-                cs.sendMessage(ChatInfo.prefix("&c" + args[0] + " is not a valid player."));
             }
         } else if (cs.hasPermission(this.getPermission())) {
-            try {
+            if (RealmsAPI.getHuman(cs.getName()) != null) {
                 Human human = RealmsAPI.getHuman(cs.getName());
 
                 //todo move formatting to Formatter.java
@@ -52,7 +49,7 @@ public class HumanCommand extends BukkitCommand {
                 if (RealmsAPI.getRealm(human) != null) ChatInfo.sendCenteredMessage(cs, "&6&l" + human.getTitle().replace(" ", "") + "&e of &6&l" + RealmsAPI.getRealm(human).getName().toUpperCase());
                 ChatInfo.sendCenteredMessage(cs, "&eJoined on " + registeredFormat.format(human.getPlayed()));
                 ChatInfo.sendCenteredMessage(cs, "&aYou're currently online!");
-            } catch (RealmsException e) {e.printStackTrace();}
+            }
         } else {
             cs.sendMessage(ChatInfo.prefix("&cYou don't have permission to do this command."));
         }

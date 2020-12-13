@@ -9,11 +9,9 @@ import main.realms.java.Realm.Realm;
 import main.realms.java.Realm.RealmCommand;
 import main.realms.java.listeners.MovementListener;
 import main.realms.utils.ChatInfo;
-import main.realms.utils.exceptions.NotFoundException;
 import main.realms.utils.exceptions.RealmsException;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_16_R2.CraftServer;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -90,7 +88,7 @@ public class RealmsMain extends JavaPlugin {
         for (Human human : humans) {
             config.set("name", human.getName());
             config.set("uuid", human.getUuid().toString());
-            config.set("title", human.getTitle());
+            config.set("title", human.title);
             config.set("played", human.getPlayed());
             config.set("online", human.getOnline());
 
@@ -116,10 +114,6 @@ public class RealmsMain extends JavaPlugin {
             config.set("coords", coordlist);
             config.set("registered", land.getRegistered());
 
-
-
-            config.set("realm", land.getRealm().getUuid().toString());
-
             try {
                 config.save(land.getData());
             } catch (IOException e) {
@@ -133,20 +127,15 @@ public class RealmsMain extends JavaPlugin {
         for (Realm realm : realms) {
             config.set("uuid", realm.getUuid().toString());
             config.set("name", realm.getName());
-            try {
-                config.set("owner", realm.getOwner().getUuid().toString());
-            } catch (RealmsException e) {
-                e.printStackTrace();
-                return false;
-            }
+            config.set("owner", realm.getOwnerUUID().toString());
             config.set("registered", realm.getRegistered());
-            if (realm.getOverlord() != null) config.set("overlord", realm.getOverlord().getUuid().toString());
+            if (realm.getOverlordUUID() != null) config.set("overlord", realm.getOverlordUUID().toString());
             else config.set("overlord", "");
 
-            // Lands
-            List<String> lands = new ArrayList<>();
-            for (Land land : realm.getLands()) lands.add(land.getUuid().toString());
-            config.set("lands", lands);
+            // Humans (Lands)
+            List<String> list = new ArrayList<>();
+            for (UUID uuid : realm.getMemberUUIDs()) list.add(uuid.toString());
+            config.set("humans", list);
 
             // Vassals
             if (realm.getVassals() != null) {
@@ -154,6 +143,13 @@ public class RealmsMain extends JavaPlugin {
                 for (Realm vassal : realm.getVassals()) vassals.add(vassal.getUuid().toString());
                 config.set("vassals", vassals);
             } else config.set("vassals", "");
+
+            // Claims
+            if (realm.getClaims() != null) {
+                List<String> cl = new ArrayList<>();
+                realm.getClaims().forEach(chunk -> cl.add(chunk.getWorld().getName() + "," + chunk.getX() + "," + chunk.getZ()));
+                config.set("claims", cl);
+            }
 
             try {
                 config.save(realm.getData());
@@ -203,23 +199,13 @@ public class RealmsMain extends JavaPlugin {
         if (realmsDATA.listFiles() != null) {
             for (File file : realmsDATA.listFiles()) {
                 try {
-                    realms.add(new Realm(file));
+                    Realm realm = new Realm(file);
+                    if (realm.getClaims() == null) Realm.UpdateClaims(realm);
+                    realms.add(realm);
                 } catch (RealmsException e) {
                     e.printStackTrace();
                     return false;
                 }
-            }
-        }
-
-        // Lands setting realms
-        for (Land land : lands) {
-            YamlConfiguration config = new YamlConfiguration();
-            try {
-                config.load(land.getData());
-                land.setRealm(RealmsAPI.getRealm(UUID.fromString(config.getString("realm"))));
-            } catch (IOException | InvalidConfigurationException | NotFoundException e) {
-                e.printStackTrace();
-                return false;
             }
         }
 

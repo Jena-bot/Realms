@@ -175,10 +175,10 @@ public class Land {
     }
 
     public Realm getRealm() throws RealmsException {
-        return RealmsAPI.getRealm(RealmsAPI.getHuman(owner));
+        return RealmsAPI.getRealm(getOwner());
     }
 
-    public Human getOwner() throws RealmsException {
+    public Human getOwner() {
         return RealmsAPI.getHuman(owner);
     }
 
@@ -245,18 +245,6 @@ public class Land {
         data.delete();
 
         RealmsMain.lands.removeIf(land -> land.getUuid() == getUuid());
-        try {
-            this.getRealm().lands.removeIf(land -> {
-                try {
-                    return RealmsAPI.getLand(land).getUuid() == getUuid();
-                } catch (NotFoundException e) {
-                    e.printStackTrace();
-                }
-                return false;
-            });
-        } catch (RealmsException e) {
-            e.printStackTrace();
-        }
 
         Bukkit.getPluginManager().callEvent(new DeleteLandEvent(this.getName()));
     }
@@ -272,7 +260,7 @@ public class Land {
 
     // static stuff
 
-    public static Land newLand(Human human, String name) throws NotFoundException {
+    public static void newLand(Human human, String name) throws NotFoundException {
         if (human.isOnline()) {
             Chunk chunk = human.getPlayer().getPlayer().getLocation().getChunk();
             Land land = new Land(chunk, human, name);
@@ -285,12 +273,11 @@ public class Land {
             }
             //todo move this to RealmListener
             if (RealmsAPI.getRealm(chunk) == null) {
-                Realm.newRealm(land, land.getName());
-            } else {
-                RealmsAPI.getRealm(chunk).addLand(land);
+                Realm.newRealm(human, name);
             }
+
             RealmsMain.lands.add(land);
-            return land;
+            return;
         }
         throw new NotFoundException();
     }

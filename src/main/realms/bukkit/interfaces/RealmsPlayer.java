@@ -22,29 +22,34 @@
  * SOFTWARE.
  */
 
-package main.realms.bukkit;
+package main.realms.bukkit.interfaces;
 
-import main.realms.bukkit.interfaces.Realm;
-import org.bukkit.plugin.java.JavaPlugin;
+import com.serializer.java.Serializer;
+import org.bukkit.OfflinePlayer;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.UUID;
 
-public class RealmsPlugin extends JavaPlugin {
-    public static String datafolder = "plugins/Realms";
-    private static RealmsPlugin plugin;
-    private List<Realm> realms = new ArrayList<>();
+/**
+ * An Interface to hold custom PlayerData of Players.
+ *
+ * @author Hafixion
+ * @since 01b
+ */
+public interface RealmsPlayer extends Serializable {
 
-    @Override
-    public void onEnable() {
+    UUID getUUID();
 
-    }
+    String getName();
 
-    public static RealmsPlugin getInstance() {
-        return plugin;
-    }
+    OfflinePlayer getOfflinePlayer();
 
-    public List<Realm> getRealms() {
-        return realms;
+    Realm getRealm();
+
+    boolean equals(RealmsPlayer player);
+
+    default String serialize() throws IOException {
+        return Serializer.serialize(this);
     }
 }

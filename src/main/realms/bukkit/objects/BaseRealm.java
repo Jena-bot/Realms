@@ -22,29 +22,10 @@
  * SOFTWARE.
  */
 
-package main.realms.bukkit;
+package main.realms.bukkit.objects;
 
 import main.realms.bukkit.interfaces.Realm;
-import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
-import java.util.List;
+public class BaseRealm implements Realm {
 
-public class RealmsPlugin extends JavaPlugin {
-    public static String datafolder = "plugins/Realms";
-    private static RealmsPlugin plugin;
-    private List<Realm> realms = new ArrayList<>();
-
-    @Override
-    public void onEnable() {
-
-    }
-
-    public static RealmsPlugin getInstance() {
-        return plugin;
-    }
-
-    public List<Realm> getRealms() {
-        return realms;
-    }
 }

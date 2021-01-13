@@ -22,29 +22,22 @@
  * SOFTWARE.
  */
 
-package main.realms.bukkit;
+package main.realms.bukkit.interfaces;
 
-import main.realms.bukkit.interfaces.Realm;
-import org.bukkit.plugin.java.JavaPlugin;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RealmsPlugin extends JavaPlugin {
-    public static String datafolder = "plugins/Realms";
-    private static RealmsPlugin plugin;
-    private List<Realm> realms = new ArrayList<>();
+public interface Perm extends Serializable {
+    String name = null;
 
-    @Override
-    public void onEnable() {
+    List<Action> getActions();
 
-    }
-
-    public static RealmsPlugin getInstance() {
-        return plugin;
-    }
-
-    public List<Realm> getRealms() {
-        return realms;
+    enum Action {
+        //todo expand the fuck out of this
+        BREAK,
+        BUILD,
+        CHEST,
+        DOOR
     }
 }

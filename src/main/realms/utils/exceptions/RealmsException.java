@@ -1,6 +1,6 @@
 package main.realms.utils.exceptions;
 
-public class RealmsException extends Exception{
+public class RealmsException extends Exception {
     public String task;
 
     public RealmsException(String s) {

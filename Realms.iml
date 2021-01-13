@@ -19,12 +19,21 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/spigot-1.16.3.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../Common Libraries/Minecraft/spigot-1.16.3.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$USER_HOME$/Downloads/spigot-1.16.3.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../Common Libraries/Minecraft/spigot-1.16.3.jar!/" />
         </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../Base64Serialization/Base64Serialization.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
       </library>
     </orderEntry>
   </component>

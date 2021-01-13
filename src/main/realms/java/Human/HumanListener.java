@@ -16,9 +16,12 @@ public class HumanListener implements Listener {
     @EventHandler
     public static void onJoin(PlayerJoinEvent event) {
         // todo add something to counter name changes
-        try {
-            RealmsAPI.getHuman(event.getPlayer());
-        } catch (RealmsException e) {
+        if (RealmsAPI.getHuman(event.getPlayer()) != null) {
+            Human human = RealmsAPI.getHuman(event.getPlayer());
+
+            if (human.getName() != event.getPlayer().getName())
+                human.setName(event.getPlayer().getName());
+        } else {
             try {
                 RealmsMain.humans.add(new Human(event.getPlayer(), true));
             } catch (RealmsException ee) {
@@ -28,7 +31,7 @@ public class HumanListener implements Listener {
     }
 
     @EventHandler
-    public static void onLeave(PlayerQuitEvent event) throws RealmsException {
+    public static void onLeave(PlayerQuitEvent event) {
         Human human = RealmsAPI.getHuman(event.getPlayer());
         RealmsMain.humans.remove(human);
         human.setOnline(System.currentTimeMillis());
@@ -38,12 +41,8 @@ public class HumanListener implements Listener {
     @EventHandler
     public static void onMove(PlayerMoveEvent event) {
         if (event.getTo().getChunk() != event.getFrom().getChunk()) {
-            try {
-                HumanChunkChangeEvent chunkChangeEvent = new HumanChunkChangeEvent(event.getFrom().getChunk(), event.getTo().getChunk(), RealmsAPI.getHuman(event.getPlayer()));
-                Bukkit.getPluginManager().callEvent(chunkChangeEvent);
-            } catch (RealmsException e) {
-                e.printStackTrace();
-            }
+            HumanChunkChangeEvent chunkChangeEvent = new HumanChunkChangeEvent(event.getFrom().getChunk(), event.getTo().getChunk(), RealmsAPI.getHuman(event.getPlayer()));
+            Bukkit.getPluginManager().callEvent(chunkChangeEvent);
         }
     }
 }

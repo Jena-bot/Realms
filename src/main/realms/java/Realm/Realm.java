@@ -19,42 +19,47 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static main.realms.java.RealmsMain.database;
+import static main.realms.java.RealmsMain.realms;
+
 @SuppressWarnings("unused")
 public class Realm {
-    public Human owner;
+    public UUID owner;
     public String name;
     public long registered;
     public UUID uuid;
-    public List<Land> lands = new ArrayList<>();
-    public List<Realm> vassals = new ArrayList<>();
-    public Realm overlord;
+    public List<UUID> humans = new ArrayList<>();
+    public UUID overlord;
     private final File data;
     public List<Chunk> claims = new ArrayList<>();
 
-    public Realm(Human owner, String name, List<Land> lands) {
-        this.owner = owner;
+    public Realm(Human owner, String name, List<Human> humans) {
+        this.owner = owner.getUuid();
         this.name = name;
-        this.lands = lands;
+
+        // UUID change
+        humans.forEach(human -> this.humans.add(human.getUuid()));
+        this.humans.add(owner.getUuid());
+
         this.uuid = UUID.randomUUID();
         this.registered = System.currentTimeMillis();
-        this.vassals = null;
         this.overlord = null;
-        this.data = new File(RealmsMain.database + "/realms", uuid.toString());
+        this.data = new File(database + "/realms", uuid.toString());
 
         // Data File saving
         YamlConfiguration config = new YamlConfiguration();
         try {
             config.set("uuid", uuid.toString());
             config.set("name", name);
-            config.set("owner", owner.getUuid().toString());
+            config.set("owner", this.owner.toString());
             config.set("registered", registered);
             config.set("vassals", "");
             config.set("overlord", "");
 
-            // lands
+            // Humans (Lands)
             List<String> list = new ArrayList<>();
-            for (Land land : lands) list.add(land.getUuid().toString());
-            config.set("lands", list);
+            for (UUID uuid : this.humans) list.add(uuid.toString());
+            config.set("humans", list);
 
             // claims
             Realm.UpdateClaims(this);
@@ -72,30 +77,33 @@ public class Realm {
         Realm.UpdateClaims(this);
     }
 
-    public Realm(Human owner, String name, Land land) {
-        this.owner = owner;
+    public Realm(Human owner, String name) {
+        this.owner = owner.getUuid();
         this.name = name;
-        this.lands.add(land);
+
+        // UUID Changes
+        this.humans = new ArrayList<>();
+        humans.add(owner.getUuid());
+
         this.uuid = UUID.randomUUID();
         this.registered = System.currentTimeMillis();
-        this.vassals = null;
         this.overlord = null;
-        this.data = new File(RealmsMain.database + "/realms", uuid.toString());
+        this.data = new File(database + "/realms", uuid.toString());
 
         // Data File saving
         YamlConfiguration config = new YamlConfiguration();
         try {
             config.set("uuid", uuid.toString());
             config.set("name", name);
-            config.set("owner", owner.getUuid().toString());
+            config.set("owner", this.owner.toString());
             config.set("registered", registered);
             config.set("vassals", "");
             config.set("overlord", "");
 
-            // lands
+            // Humans (Lands)
             List<String> list = new ArrayList<>();
-            list.add(land.getUuid().toString());
-            config.set("lands", list);
+            list.add(owner.getUuid().toString());
+            config.set("humans", list);
 
             // claims
             Realm.UpdateClaims(this);
@@ -113,31 +121,34 @@ public class Realm {
         Realm.UpdateClaims(this);
     }
 
-    public Realm(Human owner, String name, List<Land> lands, Realm overlord) {
-        this.owner = owner;
+    public Realm(Human owner, String name, List<Human> humans, Realm overlord) {
+        this.owner = owner.getUuid();
         this.name = name;
-        this.lands = lands;
-        this.overlord = overlord;
+
+        // UUID change
+        humans.forEach(human -> this.humans.add(human.getUuid()));
+        this.humans.add(owner.getUuid());
+
+        this.overlord = overlord.getUuid();
         this.uuid = UUID.randomUUID();
         this.registered = System.currentTimeMillis();
-        this.vassals = null;
-        this.overlord = null;
-        this.data = new File(RealmsMain.database + "/realms", uuid.toString());
+        this.overlord = overlord.getUuid();
+        this.data = new File(database + "/realms", uuid.toString());
 
         // Data File saving
         YamlConfiguration config = new YamlConfiguration();
         try {
             config.set("uuid", uuid.toString());
             config.set("name", name);
-            config.set("owner", owner.getUuid().toString());
+            config.set("owner", this.owner.toString());
             config.set("registered", registered);
             config.set("vassals", "");
-            config.set("overlord", overlord.getUuid().toString());
+            config.set("overlord", this.overlord.toString());
 
-            // lands
+            // Humans (Lands)
             List<String> list = new ArrayList<>();
-            for (Land land : lands) list.add(land.getUuid().toString());
-            config.set("lands", list);
+            for (UUID uuid : this.humans) list.add(uuid.toString());
+            config.set("humans", list);
 
             // claims
             Realm.UpdateClaims(this);
@@ -153,16 +164,15 @@ public class Realm {
         }
     }
 
-    public Realm(Human owner, String name, Land land, Realm overlord) {
-        this.owner = owner;
+    public Realm(Human owner, String name, Realm overlord) {
+        this.owner = owner.getUuid();
         this.name = name;
-        this.lands.add(land);
-        this.overlord = overlord;
+        this.humans.add(owner.getUuid());
+        this.overlord = overlord.getUuid();
         this.uuid = UUID.randomUUID();
         this.registered = System.currentTimeMillis();
-        this.vassals = null;
-        this.overlord = null;
-        this.data = new File(RealmsMain.database + "/realms", uuid.toString());
+        this.overlord = overlord.getUuid();
+        this.data = new File(database + "/realms", uuid.toString());
 
         // Data File saving
         YamlConfiguration config = new YamlConfiguration();
@@ -174,10 +184,10 @@ public class Realm {
             config.set("vassals", "");
             config.set("overlord", overlord.getUuid().toString());
 
-            // lands
+            // Humans (Lands)
             List<String> list = new ArrayList<>();
-            list.add(land.getUuid().toString());
-            config.set("lands", list);
+            for (UUID uuid : this.humans) list.add(uuid.toString());
+            config.set("humans", list);
 
             // claims
             Realm.UpdateClaims(this);
@@ -203,19 +213,14 @@ public class Realm {
             this.uuid = UUID.fromString(config.getString("uuid"));
             this.registered = config.getLong("registered");
             if (config.getString("overlord") != null && config.getString("overlord") != "" && config.getString("overlord") != "''") {
-                this.overlord = RealmsAPI.getRealm(UUID.fromString(config.getString("overlord")));
+                this.overlord = UUID.fromString(config.getString("overlord"));
             } else this.overlord = null;
-            this.owner = RealmsAPI.getHuman(UUID.fromString(config.getString("owner")));
+            this.owner = UUID.fromString(config.getString("owner"));
 
             // Lands
-            for (String s : config.getStringList("lands")) {
-                this.lands.add(RealmsAPI.getExactLand(s));
+            for (String s : config.getStringList("humans")) {
+                this.humans.add(UUID.fromString(s));
             }
-
-            // vassals
-             for (String s : config.getStringList("vassals")) {
-                 this.vassals.add(RealmsAPI.getRealm(UUID.fromString(s)));
-             }
 
              // claims
             for (String s : config.getStringList("claims")) {
@@ -230,37 +235,60 @@ public class Realm {
     // getters & setters
 
     public Human getOwner() {
+        return RealmsAPI.getHuman(owner);
+    }
+
+    public UUID getOwnerUUID() {
         return owner;
     }
 
-    public List<Land> getLands() {
-        return lands;
+    public List<Human> getMembers() {
+        List<Human> humanList = new ArrayList<>();
+        humans.forEach(human -> humanList.add(RealmsAPI.getHuman(human)));
+        return humanList;
+    }
+
+    public List<UUID> getMemberUUIDs() {
+        return humans;
+    }
+
+    public List<UUID> getVassalUUIDs() {
+        List<UUID> uuids = new ArrayList<>();
+        realms.forEach(realm -> {
+            if (realm.getOverlordUUID() == this.getUuid()) uuids.add(realm.getUuid());
+        });
+        return uuids;
     }
 
     public List<Realm> getVassals() {
-        return vassals;
+        List<Realm> realms = new ArrayList<>();
+        RealmsMain.realms.forEach(realm -> {
+            if (realm.getOverlordUUID() == this.getUuid()) realms.add(realm);
+        });
+        return realms;
     }
 
     public void setOwner(Human owner) {
-        this.owner = owner;
+        this.owner = owner.getUuid();
 
-        RealmsMain.realms.removeIf(realm -> realm.getUuid() == getUuid());
-        RealmsMain.realms.add(this);
+        realms.removeIf(realm -> realm.getUuid() == getUuid());
+        realms.add(this);
     }
 
-    public void addLand(Land land) {
-        lands.add(land);
+    public void addMember(Human human) {
+        humans.add(human.getUuid());
+
         Realm.UpdateClaims(this);
 
-        RealmsMain.realms.removeIf(realm -> realm.getUuid() == getUuid());
-        RealmsMain.realms.add(this);
+        realms.removeIf(realm -> realm.getUuid() == getUuid());
+        realms.add(this);
     }
 
     public void addVassal(Realm realm) {
-        vassals.add(realm);
+        realm.setOverlordUUID(this.getUuid());
 
-        RealmsMain.realms.removeIf(realm2 -> realm2.getUuid() == this.getUuid());
-        RealmsMain.realms.add(this);
+        realms.removeIf(realm2 -> realm2.getUuid() == this.getUuid());
+        realms.add(this);
     }
 
     public long getRegistered() {
@@ -278,41 +306,37 @@ public class Realm {
     public void setName(String name) {
         this.name = name;
 
-        RealmsMain.realms.removeIf(realm -> realm.getUuid() == getUuid());
-        RealmsMain.realms.add(this);
+        realms.removeIf(realm -> realm.getUuid() == getUuid());
+        realms.add(this);
     }
 
     public void setRegistered(long registered) {
         this.registered = registered;
 
-        RealmsMain.realms.removeIf(realm -> realm.getUuid() == getUuid());
-        RealmsMain.realms.add(this);
+        realms.removeIf(realm -> realm.getUuid() == getUuid());
+        realms.add(this);
     }
 
     public Realm getOverlord() {
+        return RealmsAPI.getRealm(overlord);
+    }
+
+    public UUID getOverlordUUID() {
         return overlord;
     }
 
-    public void setLands(List<Land> lands) {
-        this.lands = lands;
-        Realm.UpdateClaims(this);
-
-        RealmsMain.realms.removeIf(realm -> realm.getUuid() == getUuid());
-        RealmsMain.realms.add(this);
-    }
-
-    public void setVassals(List<Realm> vassals) {
-        this.vassals = vassals;
-
-        RealmsMain.realms.removeIf(realm -> realm.getUuid() == getUuid());
-        RealmsMain.realms.add(this);
-    }
-
     public void setOverlord(Realm overlord) {
-        this.overlord = overlord;
+        this.overlord = overlord.getUuid();
 
-        RealmsMain.realms.removeIf(realm -> realm.getUuid() == getUuid());
-        RealmsMain.realms.add(this);
+        realms.removeIf(realm -> realm.getUuid() == getUuid());
+        realms.add(this);
+    }
+
+    public void setOverlordUUID(UUID uuid) {
+        this.overlord = uuid;
+
+        realms.removeIf(realm -> realm.getUuid() == getUuid());
+        realms.add(this);
     }
 
     public File getData() {
@@ -326,8 +350,8 @@ public class Realm {
     public void setClaims(List<Chunk> claims) {
         this.claims = claims;
 
-        RealmsMain.realms.removeIf(realm -> realm.getUuid() == getUuid());
-        RealmsMain.realms.add(this);
+        realms.removeIf(realm -> realm.getUuid() == getUuid());
+        realms.add(this);
     }
 
     // Static Methods
@@ -336,29 +360,33 @@ public class Realm {
         realm.setClaims(new ArrayList<>());
 
         // claims
-        for (Land land : realm.getLands()) {
-            for (Chunk chunk : land.getChunks()) {
-                Vector2i point = new Vector2i(chunk.getX(), chunk.getZ());
-                for (int x = -5; x <= 5; x++)
-                    for (int y = -5; y <= 5; y++)
-                        if (x * x + y * y <= 25) {
-                            Chunk chunk1 = chunk.getWorld().getChunkAt(x + point.getX(), y + point.getY());
-                            if (RealmsAPI.getLand(chunk1) == null && RealmsAPI.getRealm(chunk1) == null) realm.getClaims().add(chunk1);
-                        }
+        for (Human human : realm.getMembers()) {
+            for (Land land : human.getLands()) {
+                for (Chunk chunk : land.getChunks()) {
+                    Vector2i point = new Vector2i(chunk.getX(), chunk.getZ());
+                    for (int x = -5; x <= 5; x++)
+                        for (int y = -5; y <= 5; y++)
+                            if (x * x + y * y <= 25) {
+                                Chunk chunk1 = chunk.getWorld().getChunkAt(x + point.getX(), y + point.getY());
+                                if (RealmsAPI.getLand(chunk1) == null && RealmsAPI.getRealm(chunk1) == null)
+                                    realm.getClaims().add(chunk1);
+                            }
+                }
             }
         }
     }
 
-    public static Realm newRealm(Land land, String name) {
-        Realm realm = new Realm(land.getOwner(), name, land);
-        land.setRealmData(realm);
+    public static void newRealm(Human human, String name) {
+        Realm realm = new Realm(human, name);
+        human.setTitle("Lord");
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             ChatInfo.sendCenteredMessage(player, "&8&m--------------&r &5&lNEW REALM &8&m--------------");
-            ChatInfo.sendCenteredMessage(player, "&d" + land.getOwner().getName() + " has founded §5§l" + name.toUpperCase() + "§d in " + land.getName());
+            ChatInfo.sendCenteredMessage(player, "&d" + human.getName() + " has founded §5§l" + name.toUpperCase());
         }
-        RealmsMain.realms.add(realm);
-        return realm;
+
+        Realm.UpdateClaims(realm);
+        realms.add(realm);
     }
 
 

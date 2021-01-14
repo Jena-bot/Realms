@@ -1,0 +1,9 @@
+# ██████╗ ███████╗ █████╗ ██╗     ███╗   ███╗███████╗
+# ██╔══██╗██╔════╝██╔══██╗██║     ████╗ ████║██╔════╝
+# ██████╔╝█████╗  ███████║██║     ██╔████╔██║███████╗
+# ██╔══██╗██╔══╝  ██╔══██║██║     ██║╚██╔╝██║╚════██║
+# ██║  ██║███████╗██║  ██║███████╗██║ ╚═╝ ██║███████║
+# ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝╚══════╝
+# A plugin adding Feudalism to minecraft using Bukkit. Developed by Hafixion and TrafficConeGod
+player-interface: main.realms.bukkit.objects.BasePlayer
+

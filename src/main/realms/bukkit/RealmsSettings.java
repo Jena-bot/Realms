@@ -24,5 +24,34 @@
 
 package main.realms.bukkit;
 
+import main.realms.bukkit.interfaces.RealmsPlayer;
+import main.realms.bukkit.objects.BasePlayer;
+import main.realms.utils.exceptions.InvalidConfigurationException;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+
+import java.util.Arrays;
+import java.util.List;
+
 public class RealmsSettings {
+    public Class<?> PlayerClass;
+
+    public RealmsSettings(FileConfiguration config) {
+
+        // Get the player class
+        try {
+            PlayerClass = Class.forName(config.getString("player-interface"));
+
+            List<Class<?>> interfaces = Arrays.asList(PlayerClass.getInterfaces());
+            if (!interfaces.contains(RealmsPlayer.class))
+                throw new InvalidConfigurationException();
+
+        } catch (ClassNotFoundException e) {
+            Bukkit.getServer().getLogger().severe("[Realms] Custom player interface was defined in config but not found.");
+            PlayerClass = BasePlayer.class;
+        } catch (InvalidConfigurationException e) {
+            Bukkit.getServer().getLogger().severe("[Realms] Custom player interface does not implement RealmsPlayer");
+            PlayerClass = BasePlayer.class;
+        }
+    }
 }

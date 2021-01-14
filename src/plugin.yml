@@ -1,4 +1,7 @@
 main: main.realms.bukkit.RealmsPlugin
 version: 01b
 name: Realms
+authors:
+  - Hafixion
+  - TrafficConeGod
 api-version: 1.16

@@ -33,6 +33,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -43,14 +44,16 @@ import java.util.UUID;
  */
 public class BasePlayer implements RealmsPlayer {
     private UUID uuid;
-    private long played;
-    private long online;
-    private HashMap<Perm, Realm> perms = new HashMap<>();
+    private HashMap<Realm, List<Perm>> perms = new HashMap<>();
 
-    public BasePlayer(Player player) {
-        uuid = player.getUniqueId();
-        played = player.getFirstPlayed();
-        online = player.getLastPlayed();
+    @Override
+    public void fromPlayer(Player player) {
+        this.uuid = player.getUniqueId();
+    }
+
+    @Override
+    public HashMap<Realm, List<Perm>> getPerms() {
+        return perms;
     }
 
     @Override
@@ -69,13 +72,18 @@ public class BasePlayer implements RealmsPlayer {
     }
 
     @Override
+    public boolean isOnline() {
+        return getOfflinePlayer().isOnline();
+    }
+
+    @Override
     public Realm getRealm() {
 
         // Loop through all realms and check to see if any of their owners or members are equal to this.
         for (var realm : RealmsPlugin.getInstance().getRealms())
             if (realm.getOwner() != this) {
                 for (RealmsPlayer player : realm.getMembers())
-                    if (player.equals(realm)) return realm;
+                    if (player.equals(this)) return realm;
             } else return realm;
 
         return null;
@@ -85,4 +93,5 @@ public class BasePlayer implements RealmsPlayer {
     public boolean equals(RealmsPlayer player) {
         return player.getUUID().equals(this.getUUID());
     }
+
 }

@@ -22,10 +22,7 @@
  * SOFTWARE.
  */
 
-package main.realms.bukkit.objects;
+package main.realms.bukkit;
 
-import main.realms.bukkit.interfaces.Realm;
-
-public abstract class BaseRealm implements Realm {
-
+public class RealmsSettings {
 }

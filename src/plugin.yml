@@ -1,24 +1,7 @@
-main: main.realms.java.RealmsMain
-version: 0.2.0
+main: main.realms.bukkit.RealmsPlugin
+version: 01b
 name: Realms
-api-version: 1.16
 authors:
-  - Jena-bot
-  - Traffic
-load: POSTWORLD
-
-permissions:
-  realms.command.*:
-    children:
-      - realms.command.status
-      - realms.command.land
-      - realms.command.realm
-
-  realms.command.status:
-    description: allows players to check a person's status.
-
-  realms.command.land:
-    description: allows players to check a land's status;
-
-  realms.command.realm:
-    description: allows players to check a realm's status;
+  - Hafixion
+  - TrafficConeGod
+api-version: 1.16

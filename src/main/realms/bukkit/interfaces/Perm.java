@@ -22,17 +22,22 @@
  * SOFTWARE.
  */
 
-package main.realms.utils.exceptions;
+package main.realms.bukkit.interfaces;
 
-public class RealmsException extends Exception {
-    public String task;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-    public RealmsException(String s) {
-        this.task = s;
-    }
+public interface Perm extends Serializable {
+    String name = null;
 
-    @Override
-    public String getMessage() {
-        return super.getMessage() + "Plugin Realms had an error while executing task " + task;
+    List<Action> getActions();
+
+    enum Action {
+        //todo expand the fuck out of this
+        BREAK,
+        BUILD,
+        CHEST,
+        DOOR
     }
 }

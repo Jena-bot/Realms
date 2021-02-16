@@ -22,17 +22,10 @@
  * SOFTWARE.
  */
 
-package main.realms.utils.exceptions;
+package main.realms.bukkit.objects;
 
-public class RealmsException extends Exception {
-    public String task;
+import main.realms.bukkit.interfaces.Realm;
 
-    public RealmsException(String s) {
-        this.task = s;
-    }
+public abstract class BaseRealm implements Realm {
 
-    @Override
-    public String getMessage() {
-        return super.getMessage() + "Plugin Realms had an error while executing task " + task;
-    }
 }

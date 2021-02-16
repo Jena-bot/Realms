@@ -22,17 +22,21 @@
  * SOFTWARE.
  */
 
-package main.realms.utils.exceptions;
+package main.realms.bukkit.interfaces;
 
-public class RealmsException extends Exception {
-    public String task;
+import com.serializer.java.Serializer;
 
-    public RealmsException(String s) {
-        this.task = s;
-    }
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.UUID;
 
-    @Override
-    public String getMessage() {
-        return super.getMessage() + "Plugin Realms had an error while executing task " + task;
+public interface Land extends Serializable {
+    int x = 0;
+    int z = 0;
+    UUID world = null;
+
+
+    default String serialize() throws IOException {
+        return Serializer.serialize(this);
     }
 }
